@@ -3,6 +3,7 @@ import requests.auth
 import shelve
 from endpoints import Endpoints
 from env_config import envs
+from interfaces.subreddit_interface import SubredditInterface
 
 
 class RedditClient:
@@ -13,6 +14,8 @@ class RedditClient:
         self.client_secret: str = envs.client_secret
 
         self.store_path: str = "shelve/local_storage"
+
+        self.subreddits = SubredditInterface(self)
 
     def authenticate(self):
         """Authencation requests, store access token"""
@@ -37,10 +40,25 @@ class RedditClient:
         with shelve.open(self.store_path) as ls:
             ls["authentication_info"] = response.json()
 
+    @property
+    def access_token(self):
+        with shelve.open(self.store_path) as ls:
+            if "authentication_info" not in ls:
+                self.authenticate()
+
+            return ls["authentication_info"]["access_token"]
+
+    @property
+    def default_headers(self):
+        return {
+            "Authorization": f"Bearer {self.access_token}",
+            "User-Agent": f"ChangeMeClient/0.1 by {self.username}",
+        }
+
 
 if __name__ == "__main__":
     client = RedditClient()
-    client.authenticate()
+    # client.authenticate()
+    #
 
-    with shelve.open(client.store_path) as ls:
-        print(ls["authentication_info"])
+    print(client.subreddits.mine())
