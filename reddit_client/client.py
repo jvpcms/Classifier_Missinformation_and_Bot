@@ -1,8 +1,9 @@
 import requests
 import requests.auth
 import shelve
-from endpoints import Endpoints
+
 from env_config import envs
+from endpoints import Endpoints
 from interfaces.subreddit_interface import SubredditInterface
 
 

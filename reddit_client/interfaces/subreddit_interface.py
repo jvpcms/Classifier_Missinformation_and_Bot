@@ -1,9 +1,10 @@
 import requests
-from ..endpoints import Endpoints
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ..client import RedditClient
+    from client import RedditClient
+
+from endpoints import Endpoints
 
 
 class SubredditInterface:
