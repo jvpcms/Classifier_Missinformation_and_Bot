@@ -59,7 +59,5 @@ class RedditClient:
 
 if __name__ == "__main__":
     client = RedditClient()
-    # client.authenticate()
-    #
 
-    print(client.subreddits.mine())
+    print(client.subreddits.mine.subiscriber.execute())
