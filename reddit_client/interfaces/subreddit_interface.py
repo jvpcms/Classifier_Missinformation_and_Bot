@@ -12,14 +12,16 @@ class SubredditInterface:
     def __init__(self, client: "RedditClient"):
         self.client = client
 
-        self.mine = _MineSubreddits(client)
+    def mine(self):
+        return _MineSubreddits(self.client)
 
 
 class _MineSubreddits:
     def __init__(self, client: "RedditClient"):
         self.client = client
 
-        self.subiscriber = _SubscriberSubreddits(client)
+    def subscriber(self):
+        return _SubscriberSubreddits(self.client)
 
 
 class _SubscriberSubreddits:

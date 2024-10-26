@@ -14,9 +14,7 @@ class RedditClient:
         self.app_id: str = envs.app_id
         self.client_secret: str = envs.client_secret
 
-        self.store_path: str = "shelve/local_storage"
-
-        self.subreddits = SubredditInterface(self)
+        self.store_path: str = "./shelve/local_storage"
 
     def authenticate(self):
         """Authencation requests, store access token"""
@@ -56,8 +54,11 @@ class RedditClient:
             "User-Agent": f"ChangeMeClient/0.1 by {self.username}",
         }
 
+    def subreddits(self):
+        return SubredditInterface(self)
+
 
 if __name__ == "__main__":
     client = RedditClient()
 
-    print(client.subreddits.mine.subiscriber.execute())
+    print(client.subreddits().mine().subscriber().execute())
