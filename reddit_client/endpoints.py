@@ -14,6 +14,7 @@ class Endpoints:
 
     # SUBREDDITS
     subreddits_where_subscirbed = OAUTH_URL + "/subreddits/mine/subscriber"
+    subreddits_about = OAUTH_URL + "/r/{subreddit}/about"
 
     # POSTS
     search_posts_in_subreddit = OAUTH_URL + "/r/{subreddit}/search"

@@ -1,4 +1,5 @@
-from typing import List, Dict, Any, Optional, TypeVar, Type
+from re import sub
+from typing import List, Dict, Any, Optional, TypeVar, Type, Union
 import requests
 import requests.auth
 import shelve
@@ -13,8 +14,10 @@ from models.subreddit_model import Subreddit
 from models.user_model import User
 from models.post_model import Post
 
+from utils.parser import parse
 
-T = TypeVar("T", Subreddit, User, Post)
+
+ModelType = TypeVar("ModelType", Subreddit, User, Post)
 
 
 class RedditClient:
@@ -73,9 +76,11 @@ class RedditClient:
     def execute(
         self,
         url: str,
-        return_type: Type[T],
+        return_type: Type[ModelType],
+        *,
+        many: bool = False,
         query_params: Optional[Dict[str, Any]] = None,
-    ) -> List[T]:
+    ) -> Union[ModelType, List[ModelType]]:
         """Execute request, return list of objects"""
 
         if query_params is not None:
@@ -89,22 +94,10 @@ class RedditClient:
 
         response_json = response.json()
 
-        return [return_type.from_dict(d) for d in response_json["data"]["children"]]
+        return parse(response_json, return_type, many=many)
 
 
 if __name__ == "__main__":
     client = RedditClient()
 
-    subscribed_subreddits = client.subreddits().mine().subscriber().execute()
-
-    posts = (
-        client.posts()
-        .search(
-            search_terms="python",
-            limit=5,
-            search_instance=subscribed_subreddits[0],
-        )
-        .execute()
-    )
-
-    print(posts)
+    sub = client.subreddits().about("brasil").execute()
