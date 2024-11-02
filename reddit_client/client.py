@@ -95,9 +95,16 @@ class RedditClient:
 if __name__ == "__main__":
     client = RedditClient()
 
-    # subscribed_subreddits = client.subreddits().mine().subscriber().execute()
-    # print(subscribed_subreddits)
+    subscribed_subreddits = client.subreddits().mine().subscriber().execute()
 
-    posts = client.posts().search(search_terms="python and java", limit=5).execute()
-    print(posts[0].title)
-    print(posts[0].selftext)
+    posts = (
+        client.posts()
+        .search(
+            search_terms="python",
+            limit=5,
+            search_instance=subscribed_subreddits[0],
+        )
+        .execute()
+    )
+
+    print(posts)

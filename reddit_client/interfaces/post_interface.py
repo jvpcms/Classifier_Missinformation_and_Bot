@@ -47,7 +47,7 @@ class _SearchPosts:
 
         elif isinstance(self.search_instance, Subreddit):
             url = Endpoints.search_posts_in_subreddit.format(
-                subreddit=self.search_instance.name
+                subreddit=self.search_instance.display_name
             )
 
         else:
