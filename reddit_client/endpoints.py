@@ -1,3 +1,6 @@
+import urllib.parse
+from typing import Dict
+
 URL = "https://www.reddit.com"
 OAUTH_URL = "https://oauth.reddit.com"
 
@@ -16,4 +19,8 @@ class Endpoints:
     search_posts_in_subreddit = OAUTH_URL + "/r/{subreddit}/search"
 
     # SEARCH
-    search = OAUTH_URL + "/search.json"
+    search = OAUTH_URL + "/search"
+
+
+def encode_url(url: str, query_params: Dict[str, str]) -> str:
+    return url + "?" + urllib.parse.urlencode(query_params)

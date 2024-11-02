@@ -1,10 +1,20 @@
+from typing import List, Dict, Any, Optional, TypeVar, Type
 import requests
 import requests.auth
 import shelve
 
 from env_config import envs
-from endpoints import Endpoints
+from endpoints import Endpoints, encode_url
+
 from interfaces.subreddit_interface import SubredditInterface
+from interfaces.post_interface import PostInterface
+
+from models.subreddit_model import Subreddit
+from models.user_model import User
+from models.post_model import Post
+
+
+T = TypeVar("T", Subreddit, User, Post)
 
 
 class RedditClient:
@@ -57,8 +67,37 @@ class RedditClient:
     def subreddits(self):
         return SubredditInterface(self)
 
+    def posts(self):
+        return PostInterface(self)
+
+    def execute(
+        self,
+        url: str,
+        return_type: Type[T],
+        query_params: Optional[Dict[str, Any]] = None,
+    ) -> List[T]:
+        """Execute request, return list of objects"""
+
+        if query_params is not None:
+            url = encode_url(url, query_params)
+
+        response = requests.get(url, headers=self.default_headers)
+
+        if response.status_code == 401:
+            self.authenticate()
+            response = requests.get(url, headers=self.default_headers)
+
+        response_json = response.json()
+
+        return [return_type.from_dict(d) for d in response_json["data"]["children"]]
+
 
 if __name__ == "__main__":
     client = RedditClient()
 
-    print(client.subreddits().mine().subscriber().execute())
+    # subscribed_subreddits = client.subreddits().mine().subscriber().execute()
+    # print(subscribed_subreddits)
+
+    posts = client.posts().search(search_terms="python and java", limit=5).execute()
+    print(posts[0].title)
+    print(posts[0].selftext)
