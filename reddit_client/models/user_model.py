@@ -17,7 +17,6 @@ class User:
     link_karma: int
     total_karma: int
     comment_karma: int
-    created: float
     created_utc: float
 
     @staticmethod
@@ -38,6 +37,5 @@ class User:
             link_karma=response["data"]["link_karma"],
             total_karma=response["data"]["total_karma"],
             comment_karma=response["data"]["comment_karma"],
-            created=response["data"]["created"],
             created_utc=response["data"]["created_utc"],
         )

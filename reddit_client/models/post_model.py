@@ -19,7 +19,6 @@ class Post:
     score: int
     is_original_content: bool
     link_flair_text: str
-    created: float
     created_utc: float
     media_only: bool
     media: Dict[str, Any]
@@ -47,7 +46,6 @@ class Post:
             score=response["data"]["score"],
             is_original_content=response["data"]["is_original_content"],
             link_flair_text=response["data"]["link_flair_text"],
-            created=response["data"]["created"],
             created_utc=response["data"]["created_utc"],
             media_only=response["data"]["media_only"],
             media=response["data"]["media"],
