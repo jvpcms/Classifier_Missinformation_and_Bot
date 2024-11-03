@@ -22,10 +22,4 @@ class _AboutUser:
 
     def execute(self) -> User:
         url = Endpoints.user_about.format(username=self.username)
-
-        result = self.client.execute(url, User)
-
-        if isinstance(result, list):
-            return result[0]
-
-        return result
+        return self.client.execute(url, User)

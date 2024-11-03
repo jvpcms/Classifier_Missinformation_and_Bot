@@ -60,9 +60,4 @@ class _SearchPosts:
         if self.limit is not None:
             params["limit"] = self.limit
 
-        result = self.client.execute(url, Post, query_params=params, many=True)
-
-        if not isinstance(result, list):
-            return [result]
-
-        return result
+        return self.client.execute(url, Post, query_params=params, many=True)

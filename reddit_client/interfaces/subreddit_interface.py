@@ -36,12 +36,7 @@ class _SubscriberSubreddits:
 
     def execute(self) -> List[Subreddit]:
         url = Endpoints.subreddits_where_subscirbed
-        result = self.client.execute(url, Subreddit, many=True)
-
-        if not isinstance(result, list):
-            return [result]
-
-        return result
+        return self.client.execute(url, Subreddit, many=True)
 
 
 # Search subreddits
@@ -58,10 +53,4 @@ class _AboutSubreddits:
 
     def execute(self) -> Subreddit:
         url = Endpoints.subreddits_about.format(subreddit=self.display_name)
-
-        resut = self.client.execute(url, Subreddit)
-
-        if isinstance(resut, list):
-            return resut[0]
-
-        return resut
+        return self.client.execute(url, Subreddit)

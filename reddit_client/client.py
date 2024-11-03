@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Optional, TypeVar, Type, Union
+from typing import List, Dict, Any, Optional, TypeVar, Type, Union, overload
 import requests
 import requests.auth
 import shelve
@@ -77,6 +77,25 @@ class RedditClient:
 
     def users(self):
         return UserInterface(self)
+
+    @overload
+    def execute(
+        self,
+        url: str,
+        return_type: Type[ModelType],
+        *,
+        query_params: Optional[Dict[str, Any]] = None,
+    ) -> ModelType: ...
+
+    @overload
+    def execute(
+        self,
+        url: str,
+        return_type: Type[ModelType],
+        *,
+        many: bool,
+        query_params: Optional[Dict[str, Any]] = None,
+    ) -> List[ModelType]: ...
 
     def execute(
         self,
