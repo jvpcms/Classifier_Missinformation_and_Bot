@@ -1,3 +1,5 @@
+from datetime import datetime
+from dateutil.tz import tzutc
 from typing import Any, Dict
 from dataclasses import dataclass
 
@@ -19,7 +21,7 @@ class Post:
     score: int
     is_original_content: bool
     link_flair_text: str
-    created_utc: float
+    created_utc: datetime
     media_only: bool
     media: Dict[str, Any]
     num_comments: int
@@ -46,7 +48,9 @@ class Post:
             score=response["data"]["score"],
             is_original_content=response["data"]["is_original_content"],
             link_flair_text=response["data"]["link_flair_text"],
-            created_utc=response["data"]["created_utc"],
+            created_utc=datetime.fromtimestamp(
+                response["data"]["created_utc"], tz=tzutc()
+            ),
             media_only=response["data"]["media_only"],
             media=response["data"]["media"],
             num_comments=response["data"]["num_comments"],

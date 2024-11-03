@@ -1,3 +1,5 @@
+from datetime import datetime
+from dateutil.tz import tzutc
 from dataclasses import dataclass
 from typing import Any, Dict
 
@@ -17,7 +19,7 @@ class User:
     link_karma: int
     total_karma: int
     comment_karma: int
-    created_utc: float
+    created_utc: datetime
 
     @staticmethod
     def from_dict(response: Dict[str, Any]) -> "User":
@@ -37,5 +39,7 @@ class User:
             link_karma=response["data"]["link_karma"],
             total_karma=response["data"]["total_karma"],
             comment_karma=response["data"]["comment_karma"],
-            created_utc=response["data"]["created_utc"],
+            created_utc=datetime.fromtimestamp(
+                response["data"]["created_utc"], tz=tzutc()
+            ),
         )

@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+from datetime import datetime
+from dateutil.tz import tzutc
 from typing import Dict, Any
 
 
@@ -14,7 +16,7 @@ class Subreddit:
     description: str
     subreddit_type: str
     subscribers: int
-    created_utc: float
+    created_utc: datetime
     accounts_active: str
     url: str
     icon_img: str
@@ -34,7 +36,9 @@ class Subreddit:
             description=response["data"]["description"],
             subreddit_type=response["data"]["subreddit_type"],
             subscribers=response["data"]["subscribers"],
-            created_utc=response["data"]["created_utc"],
+            created_utc=datetime.fromtimestamp(
+                response["data"]["created_utc"], tz=tzutc()
+            ),
             accounts_active=response["data"]["accounts_active"],
             url=response["data"]["url"],
             icon_img=response["data"]["icon_img"],
