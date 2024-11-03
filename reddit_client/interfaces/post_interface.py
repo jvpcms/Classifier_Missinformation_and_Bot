@@ -1,4 +1,3 @@
-import requests
 from typing import TYPE_CHECKING, List, Optional, Union, Dict, Any
 
 if TYPE_CHECKING:

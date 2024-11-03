@@ -19,6 +19,9 @@ class Endpoints:
     # POSTS
     search_posts_in_subreddit = OAUTH_URL + "/r/{subreddit}/search"
 
+    # USERS
+    user_about = OAUTH_URL + "/user/{username}/about"
+
     # SEARCH
     search = OAUTH_URL + "/search"
 

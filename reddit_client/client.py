@@ -1,4 +1,3 @@
-from re import sub
 from typing import List, Dict, Any, Optional, TypeVar, Type, Union
 import requests
 import requests.auth
@@ -9,6 +8,7 @@ from endpoints import Endpoints, encode_url
 
 from interfaces.subreddit_interface import SubredditInterface
 from interfaces.post_interface import PostInterface
+from interfaces.user_interface import UserInterface
 
 from models.subreddit_model import Subreddit
 from models.user_model import User
@@ -29,6 +29,7 @@ class RedditClient:
 
         self.store_path: str = "./shelve/local_storage"
 
+    # Authentication
     def authenticate(self):
         """Authencation requests, store access token"""
 
@@ -67,11 +68,15 @@ class RedditClient:
             "User-Agent": f"ChangeMeClient/0.1 by {self.username}",
         }
 
+    # Interfaces
     def subreddits(self):
         return SubredditInterface(self)
 
     def posts(self):
         return PostInterface(self)
+
+    def users(self):
+        return UserInterface(self)
 
     def execute(
         self,
@@ -100,4 +105,5 @@ class RedditClient:
 if __name__ == "__main__":
     client = RedditClient()
 
-    sub = client.subreddits().about("brasil").execute()
+    usr = client.users().about("Garfield_Car").execute()
+    print(usr)
