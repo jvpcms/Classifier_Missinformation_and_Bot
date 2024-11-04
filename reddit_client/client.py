@@ -78,6 +78,7 @@ class RedditClient:
     def users(self):
         return UserInterface(self)
 
+    # Execute API requests
     @overload
     def execute(
         self,
