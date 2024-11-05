@@ -26,7 +26,7 @@ def parse(
         raise ValueError(f"{model} does not have a from_dict method")
 
     if many:
-        children = response["response"]["children"]
+        children = response["data"]["children"]
         return [model.from_dict(child) for child in children]
 
     return model.from_dict(response)
