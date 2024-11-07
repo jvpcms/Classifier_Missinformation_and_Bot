@@ -1,6 +1,6 @@
-from env_config import EnvConfig
-from endpoints import Endpoints
-from parser import Parser
+from utils.env_config import EnvConfig
+from utils.endpoints import Endpoints
+from utils.parser import Parser
 
 
 class Utils:

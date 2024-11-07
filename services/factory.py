@@ -1,6 +1,6 @@
 from utils.factory import Utils, get_utils
 
-from client import RedditClient
+from services.client import RedditClient
 
 
 class Services:

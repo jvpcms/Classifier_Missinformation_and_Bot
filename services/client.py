@@ -3,6 +3,8 @@ import requests
 import requests.auth
 import shelve
 
+from utils.endpoints import Endpoints
+from utils.parser import Parser
 from utils.factory import Utils
 
 from models.subreddit_model import Subreddit
@@ -14,7 +16,8 @@ ModelType = TypeVar("ModelType", Subreddit, User, Post)
 
 
 class RedditClient:
-    utils: Utils
+    endpoints: Endpoints
+    parser: Parser
 
     username: str
     password: str
@@ -24,7 +27,8 @@ class RedditClient:
     store_path: str
 
     def __init__(self, utils: Utils):
-        self.utils = utils
+        self.endpoints = utils.endpoints
+        self.parser = utils.parser
 
         self.username = utils.envs.username
         self.password = utils.envs.password
@@ -63,7 +67,10 @@ class RedditClient:
         headers = {"User-Agent": f"ChangeMeClient/0.1 by {self.username}"}
 
         response = requests.post(
-            self.access_token, auth=client_auth, data=post_data, headers=headers
+            self.endpoints.access_token,
+            auth=client_auth,
+            data=post_data,
+            headers=headers,
         )
 
         if response.status_code != 200:
@@ -103,7 +110,7 @@ class RedditClient:
         """Execute request, return list of objects"""
 
         if query_params is not None:
-            url = self.utils.endpoints.encode_url(url, query_params)
+            url = self.endpoints.encode_url(url, query_params)
 
         response = requests.get(url, headers=self.default_headers)
 
@@ -113,4 +120,4 @@ class RedditClient:
 
         response_json = response.json()
 
-        return self.utils.parser.parse(response_json, return_type, many=many)
+        return self.parser.parse(response_json, return_type, many=many)
