@@ -1,5 +1,5 @@
 from services.factory import Services
-from services.client import RedditClient
+from services.reddit_client import RedditClient
 
 from utils.factory import Utils
 from utils.endpoints import Endpoints

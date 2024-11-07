@@ -1,7 +1,7 @@
 from utils.factory import Utils, get_utils
 from config.factory import Config, get_config
 
-from services.client import RedditClient
+from services.reddit_client import RedditClient
 
 
 class Services:
