@@ -81,7 +81,7 @@ class RedditClient:
 
     # Execute API requests
     @overload
-    def execute(
+    def api_call(
         self,
         url: str,
         return_type: Type[ModelType],
@@ -90,7 +90,7 @@ class RedditClient:
     ) -> ModelType: ...
 
     @overload
-    def execute(
+    def api_call(
         self,
         url: str,
         return_type: Type[ModelType],
@@ -99,7 +99,7 @@ class RedditClient:
         query_params: Optional[Dict[str, Any]] = None,
     ) -> List[ModelType]: ...
 
-    def execute(
+    def api_call(
         self,
         url: str,
         return_type: Type[ModelType],

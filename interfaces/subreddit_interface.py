@@ -19,8 +19,8 @@ class SubredditInterface:
 
     def subscriber_subreddits(self) -> List[Subreddit]:
         url = self.endpoints.subreddits_where_subscirbed
-        return self.client.execute(url, Subreddit, many=True)
+        return self.client.api_call(url, Subreddit, many=True)
 
     def about(self, display_name: str) -> Subreddit:
         url = self.endpoints.subreddits_about.format(subreddit=display_name)
-        return self.client.execute(url, Subreddit)
+        return self.client.api_call(url, Subreddit)

@@ -17,4 +17,4 @@ class UserInterface:
 
     def about(self, username: str) -> User:
         url = self.endpoints.user_about.format(username=username)
-        return self.client.execute(url, User)
+        return self.client.api_call(url, User)

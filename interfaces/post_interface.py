@@ -44,4 +44,4 @@ class PostInterface:
         if limit is not None:
             params["limit"] = limit
 
-        return self.client.execute(url, Post, query_params=params, many=True)
+        return self.client.api_call(url, Post, query_params=params, many=True)
