@@ -125,5 +125,13 @@ class RedditClient:
 if __name__ == "__main__":
     client = RedditClient()
 
-    usr = client.users().about("Garfield_Car").execute()
-    print(usr)
+    posts = client.posts().search("Latest News", limit=3).execute()
+    print(posts)
+
+    for post in posts:
+        user = (
+            client.users().about(post.author).execute()
+        )  # TODO: absout accepts object also
+        subreddit = (
+            client.subreddits().about(post.subreddit).execute()
+        )  # TODO: absout accepts object also
