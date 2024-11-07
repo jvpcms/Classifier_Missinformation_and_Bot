@@ -7,13 +7,21 @@ O desenvolvimento dessa aplicação é motivado pela necessidade de extrair dado
 
 ## Basic Use
 ```python
-    client = RedditClient()
+  from interfaces.factory import get_interfaces
 
-    # buscar publicações
-    posts = client.posts().search("Latest News").execute()
 
-    # usuários e subreddits
-    for post in posts:
-        user = client.users().about(post.author).execute()
-        subreddit = client.subreddits().about(post.subreddit).execute()
+  interfaces = get_interfaces()
+
+  # instantiate interfaces
+  post_interface = interfaces.post_interface
+  subreddit_interface = interfaces.subreddit_interface
+  user_interface = interfaces.user_interface
+
+  # search posts
+  posts = post_interface.search("Latest News", limit=3)
+
+  # user and subreddit details
+  for post in posts:
+      user = user_interface.about(post.author)
+      subreddit = subreddit_interface.about(post.subreddit)
 ```
