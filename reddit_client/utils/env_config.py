@@ -49,7 +49,3 @@ class EnvConfig:
             raise Exception(f"Envioriment variable {env_name} not set.")
 
         return env_var
-
-
-# Instanciate class
-envs = EnvConfig()
