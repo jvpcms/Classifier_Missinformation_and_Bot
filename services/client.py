@@ -7,6 +7,8 @@ from utils.endpoints import Endpoints
 from utils.parser import Parser
 from utils.factory import Utils
 
+from config.factory import Config
+
 from models.subreddit_model import Subreddit
 from models.user_model import User
 from models.post_model import Post
@@ -26,14 +28,14 @@ class RedditClient:
 
     store_path: str
 
-    def __init__(self, utils: Utils):
+    def __init__(self, config: Config, utils: Utils):
         self.endpoints = utils.endpoints
         self.parser = utils.parser
 
-        self.username = utils.envs.username
-        self.password = utils.envs.password
-        self.app_id = utils.envs.app_id
-        self.client_secret = utils.envs.client_secret
+        self.username = config.envs.username
+        self.password = config.envs.password
+        self.app_id = config.envs.app_id
+        self.client_secret = config.envs.client_secret
 
         self.store_path = "./shelve/local_storage"
 
