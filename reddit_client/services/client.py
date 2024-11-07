@@ -5,10 +5,6 @@ import shelve
 
 from utils.factory import Utils
 
-from interfaces.subreddit_interface import SubredditInterface
-from interfaces.post_interface import PostInterface
-from interfaces.user_interface import UserInterface
-
 from models.subreddit_model import Subreddit
 from models.user_model import User
 from models.post_model import Post
@@ -76,16 +72,6 @@ class RedditClient:
         with shelve.open(self.store_path) as ls:
             ls["authentication_info"] = response.json()
 
-    # Interfaces
-    def subreddits(self):
-        return SubredditInterface(self)
-
-    def posts(self):
-        return PostInterface(self)
-
-    def users(self):
-        return UserInterface(self)
-
     # Execute API requests
     @overload
     def execute(
@@ -128,18 +114,3 @@ class RedditClient:
         response_json = response.json()
 
         return self.utils.parser.parse(response_json, return_type, many=many)
-
-
-# if __name__ == "__main__":
-#     client = RedditClient()
-#
-#     posts = client.posts().search("Latest News", limit=3).execute()
-#     print(posts)
-#
-#     for post in posts:
-#         user = (
-#             client.users().about(post.author).execute()
-#         )  # TODO: absout accepts object also
-#         subreddit = (
-#             client.subreddits().about(post.subreddit).execute()
-#         )  # TODO: absout accepts object also

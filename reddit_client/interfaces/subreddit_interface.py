@@ -1,56 +1,20 @@
-from typing import TYPE_CHECKING, List
+from typing import List
 
-if TYPE_CHECKING:
-    from client import RedditClient
+from services.factory import Services
+from utils.factory import Utils
 
-from endpoints import Endpoints
 from models.subreddit_model import Subreddit
 
 
 class SubredditInterface:
-    def __init__(self, client: "RedditClient"):
-        self.client = client
+    def __init__(self, services: Services, utils: Utils):
+        self.client = services.reddit_client
+        self.endpoints = utils.endpoints
 
-    def mine(self) -> "_MineSubreddits":
-        return _MineSubreddits(self.client)
-
-    def search(self) -> "_SearchSubreddits":
-        return _SearchSubreddits(self.client)
-
-    def about(self, display_name: str) -> "_AboutSubreddits":
-        return _AboutSubreddits(self.client, display_name)
-
-
-# Mine subreddits
-class _MineSubreddits:
-    def __init__(self, client: "RedditClient"):
-        self.client = client
-
-    def subscriber(self) -> "_SubscriberSubreddits":
-        return _SubscriberSubreddits(self.client)
-
-
-class _SubscriberSubreddits:
-    def __init__(self, client: "RedditClient"):
-        self.client = client
-
-    def execute(self) -> List[Subreddit]:
-        url = Endpoints.subreddits_where_subscirbed
+    def subscriber_subreddits(self) -> List[Subreddit]:
+        url = self.endpoints.subreddits_where_subscirbed
         return self.client.execute(url, Subreddit, many=True)
 
-
-# Search subreddits
-class _SearchSubreddits:
-    def __init__(self, client: "RedditClient"):
-        self.client = client
-
-
-# About subreddits
-class _AboutSubreddits:
-    def __init__(self, client: "RedditClient", display_name: str):
-        self.client = client
-        self.display_name = display_name
-
-    def execute(self) -> Subreddit:
-        url = Endpoints.subreddits_about.format(subreddit=self.display_name)
+    def about(self, display_name: str) -> Subreddit:
+        url = self.endpoints.subreddits_about.format(subreddit=display_name)
         return self.client.execute(url, Subreddit)

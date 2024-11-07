@@ -1,25 +1,14 @@
-from typing import TYPE_CHECKING
+from services.factory import Services
+from utils.factory import Utils
 
-if TYPE_CHECKING:
-    from client import RedditClient
-
-from endpoints import Endpoints
 from models.user_model import User
 
 
 class UserInterface:
-    def __init__(self, client: "RedditClient"):
-        self.client = client
+    def __init__(self, services: Services, utils: Utils):
+        self.client = services.reddit_client
+        self.endpoints = utils.endpoints
 
-    def about(self, username: str) -> "_AboutUser":
-        return _AboutUser(self.client, username)
-
-
-class _AboutUser:
-    def __init__(self, client: "RedditClient", username: str):
-        self.client = client
-        self.username = username
-
-    def execute(self) -> User:
-        url = Endpoints.user_about.format(username=self.username)
+    def about(self, username: str) -> User:
+        url = self.endpoints.user_about.format(username=username)
         return self.client.execute(url, User)

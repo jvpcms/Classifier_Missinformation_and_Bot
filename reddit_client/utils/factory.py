@@ -8,15 +8,11 @@ class Utils:
     parser: Parser
     endpoints: Endpoints
 
-    def __init__(self, envs: EnvConfig, parser: Parser, endpoints: Endpoints):
-        self.envs = envs
-        self.parser = parser
-        self.endpoints = endpoints
+    def __init__(self):
+        self.envs = EnvConfig()
+        self.parser = Parser()
+        self.endpoints = Endpoints()
 
 
 def get_utils():
-    envs = EnvConfig()
-    parser = Parser()
-    endpoints = Endpoints()
-
-    return Utils(envs, parser, endpoints)
+    return Utils()
