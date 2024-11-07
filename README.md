@@ -4,6 +4,12 @@ Esta aplicação em Python foi desenvolvida com o objetivo de simplificar e abst
 O desenvolvimento dessa aplicação é motivado pela necessidade de extrair dados de publicações de notícias e construir conjuntos de dados consistentes sobre notícias falsas e verdadeiras, para aplicações em inteligência artificial, como treinamento de modelos de classificação. Além disso, a aplicação permite a coleta de dados sobre perfis de usuários, possibilitando a análise e a classificação de contas como bots ou não-bots com base em suas atividades e características comportamentais.
 
 ## Setup
+```
+REDDIT_CLIENT_SECRET=your_reddit_client_secret
+REDDIT_APP_ID=your_reddit_app_id
+REDDIT_USERNAME=your_username
+REDDIT_PASSWORD=your_password
+```
 
 ## Basic Use
 ```python
