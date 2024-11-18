@@ -6,7 +6,6 @@ from typing import Dict, Any
 
 @dataclass
 class Subreddit:
-    kind: str
     id: str
     display_name: str
     display_name_prefixed: str
@@ -26,7 +25,6 @@ class Subreddit:
     @staticmethod
     def from_dict(response: Dict[str, Any]) -> "Subreddit":
         return Subreddit(
-            kind=response["kind"],
             id=response["data"]["id"],
             display_name=response["data"]["display_name"],
             display_name_prefixed=response["data"]["display_name_prefixed"],
