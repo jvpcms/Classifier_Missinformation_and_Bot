@@ -59,3 +59,30 @@ class Post:
             num_crossposts=response["data"]["num_crossposts"],
             is_video=response["data"]["is_video"],
         )
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "id": self.id,
+            "subreddit": self.subreddit,
+            "subreddit_name_prefixed": self.subreddit_name_prefixed,
+            "subreddit_id": self.subreddit_id,
+            "subreddit_subscribers": self.subreddit_subscribers,
+            "author": self.author,
+            "author_fullname": self.author_fullname,
+            "title": self.title,
+            "selftext": self.selftext,
+            "name": self.name,
+            "upvote_ratio": self.upvote_ratio,
+            "ups": self.ups,
+            "score": self.score,
+            "is_original_content": self.is_original_content,
+            "link_flair_text": self.link_flair_text,
+            "created_utc": self.created_utc.timestamp(),
+            "media_only": self.media_only,
+            "media": self.media,
+            "num_comments": self.num_comments,
+            "permalink": self.permalink,
+            "url": self.url,
+            "num_crossposts": self.num_crossposts,
+            "is_video": self.is_video,
+        }

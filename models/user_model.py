@@ -43,3 +43,21 @@ class User:
                 response["data"]["created_utc"], tz=tzutc()
             ),
         )
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "id": self.id,
+            "name": self.name,
+            "display_name": self.display_name,
+            "display_name_prefixed": self.display_name_prefixed,
+            "title": self.title,
+            "description": self.description,
+            "public_description": self.public_description,
+            "subscribers": self.subscribers,
+            "url": self.url,
+            "awardee_karma": self.awardee_karma,
+            "link_karma": self.link_karma,
+            "total_karma": self.total_karma,
+            "comment_karma": self.comment_karma,
+            "created_utc": self.created_utc.timestamp(),
+        }
