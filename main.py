@@ -1,14 +1,15 @@
 from interfaces.factory import get_interfaces
+from repos.factory import get_repos
 
 
 interfaces = get_interfaces()
 post_interface = interfaces.post_interface
-subreddit_interface = interfaces.subreddit_interface
-user_interface = interfaces.user_interface
 
-posts = post_interface.search("Latest News", limit=3)
-print(posts)
+# repos = get_repos()
+# post_repo = repos.posts
+# post_repo.read_all()
 
-for post in posts:
-    user = user_interface.about(post.author)
-    subreddit = subreddit_interface.about(post.subreddit)
+posts = post_interface.search("Latest News", limit=1)
+#
+# for post in posts:
+#     post_repo.insert(post)
