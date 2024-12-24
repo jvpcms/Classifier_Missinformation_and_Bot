@@ -1,9 +1,9 @@
-from services.factory import Services, get_services
-from utils.factory import Utils, get_utils
+from reddit_api.services.factory import Services, get_services
+from reddit_api.utils.factory import Utils, get_utils
 
-from interfaces.post_interface import PostInterface
-from interfaces.subreddit_interface import SubredditInterface
-from interfaces.user_interface import UserInterface
+from reddit_api.interfaces.post_interface import PostInterface
+from reddit_api.interfaces.subreddit_interface import SubredditInterface
+from reddit_api.interfaces.user_interface import UserInterface
 
 
 class Interfaces:

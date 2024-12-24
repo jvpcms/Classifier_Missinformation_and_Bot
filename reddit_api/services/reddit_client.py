@@ -3,15 +3,15 @@ import requests
 import requests.auth
 import shelve
 
-from utils.endpoints import Endpoints
-from utils.parser import Parser
-from utils.factory import Utils
+from reddit_api.utils.endpoints import Endpoints
+from reddit_api.utils.parser import Parser
+from reddit_api.utils.factory import Utils
 
-from config.factory import Config
+from reddit_api.config.factory import Config
 
-from models.subreddit_model import Subreddit
-from models.user_model import User
-from models.post_model import Post
+from reddit_api.models.subreddit_model import Subreddit
+from reddit_api.models.user_model import User
+from reddit_api.models.post_model import Post
 
 
 ModelType = TypeVar("ModelType", Subreddit, User, Post)
@@ -37,7 +37,7 @@ class RedditClient:
         self.app_id = config.envs.app_id
         self.client_secret = config.envs.client_secret
 
-        self.store_path = "./shelve/local_storage"
+        self.store_path = "./reddit_api/shelve/local_storage"
 
     # Authentication
     @property

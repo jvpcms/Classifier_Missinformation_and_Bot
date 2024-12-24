@@ -1,5 +1,5 @@
-from utils.endpoints import Endpoints
-from utils.parser import Parser
+from reddit_api.utils.endpoints import Endpoints
+from reddit_api.utils.parser import Parser
 
 
 class Utils:

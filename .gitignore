@@ -1,5 +1,5 @@
 **/.env
 **/__pycache__
 
-shelve/*
-!shelve/.gitkeep
+reddit_api/shelve/*
+!reddit_api/shelve/.gitkeep

@@ -1,8 +1,8 @@
 from pymongo import MongoClient
-from config.factory import Config, get_config
-from repos.post_repo import PostRepo
-from repos.subreddit_repo import SubredditRepo
-from repos.user_repo import UserRepo
+from database.config.factory import Config, get_config
+from database.repos.post_repo import PostRepo
+from database.repos.subreddit_repo import SubredditRepo
+from database.repos.user_repo import UserRepo
 
 
 class ReposFactory:

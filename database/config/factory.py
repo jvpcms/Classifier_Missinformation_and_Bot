@@ -1,4 +1,4 @@
-from config.env_config import EnvConfig
+from .env_config import EnvConfig
 
 
 class Config:

@@ -1,18 +1,18 @@
 from pymongo.synchronous.collection import Collection
 from pymongo.synchronous.database import Database
-from models.subreddit_model import Subreddit
+from reddit_api.models.user_model import User
 
 
-class SubredditRepo:
+class UserRepo:
     collection: Collection
 
     def __init__(self, db: Database):
-        self.collection = db.subreddits
+        self.collection = db.users
         self.collection.create_index(
             "name", unique=True
         )  # use the acctual reddit name as pk
 
-    def insert(self, subreddit: Subreddit) -> Subreddit:
-        self.collection.insert_one(subreddit.to_dict())
+    def insert(self, user: User) -> User:
+        self.collection.insert_one(user.to_dict())
 
-        return subreddit
+        return user

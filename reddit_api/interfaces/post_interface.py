@@ -1,14 +1,14 @@
 from typing import List, Optional, Union, Dict, Any
 
-from services.factory import Services
-from services.reddit_client import RedditClient
+from reddit_api.services.factory import Services
+from reddit_api.services.reddit_client import RedditClient
 
-from utils.factory import Utils
-from utils.endpoints import Endpoints
+from reddit_api.utils.factory import Utils
+from reddit_api.utils.endpoints import Endpoints
 
-from models.subreddit_model import Subreddit
-from models.user_model import User
-from models.post_model import Post
+from reddit_api.models.subreddit_model import Subreddit
+from reddit_api.models.user_model import User
+from reddit_api.models.post_model import Post
 
 
 class PostInterface:

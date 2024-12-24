@@ -1,10 +1,10 @@
-from services.factory import Services
-from services.reddit_client import RedditClient
+from reddit_api.services.factory import Services
+from reddit_api.services.reddit_client import RedditClient
 
-from utils.factory import Utils
-from utils.endpoints import Endpoints
+from reddit_api.utils.factory import Utils
+from reddit_api.utils.endpoints import Endpoints
 
-from models.user_model import User
+from reddit_api.models.user_model import User
 
 
 class UserInterface:
