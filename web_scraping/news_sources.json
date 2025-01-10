@@ -1,0 +1,17 @@
+{
+  "agencies": [
+    "https://aosfatos.org/noticias/feed/",
+    "https://piaui.folha.uol.com.br/lupa/feed/",
+    "https://g1.globo.com/fato-ou-fake/",
+    "https://www.e-farsas.com/",
+    "https://www.boatos.org",
+    "https://apublica.org/feed/",
+    "https://apublica.org/tag/truco/feed/",
+    "https://checamos.afp.com"
+  ],
+  "virtual_medias": [
+    "https://g1.globo.com/rss/g1/tecnologia/",
+    "https://g1.globo.com/rss/g1/educacao/",
+    "https://g1.globo.com/rss/g1/economia/"
+  ]
+}
