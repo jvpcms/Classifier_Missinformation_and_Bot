@@ -16,6 +16,3 @@ class PostRepo:
         self.collection.insert_one(post.to_dict())
 
         return post
-
-    def read_all(self):
-        print([post for post in self.collection.find()])
