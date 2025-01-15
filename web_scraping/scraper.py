@@ -1,8 +1,11 @@
 from abc import ABC
 from feedparser import parse
+from feedparser.encodings import re
 import requests
 from bs4 import BeautifulSoup
 from dataclasses import dataclass
+import urllib.request
+from newspaper import Article
 
 
 def print_dict_keys(d: dict, identation: int = 0):
@@ -32,6 +35,14 @@ class Scraper(ABC):
             entries.append(FeedEntry(title=entry.title, link=entry.link))
 
         return entries
+
+    def collect_data(self):
+        entries = self.get_feed_entries()
+
+        entry = entries[0]
+        article = Article(entry.link)
+        article.download()
+        article.parse()
 
 
 class AosFatosScraper(Scraper):

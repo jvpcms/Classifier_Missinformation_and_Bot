@@ -14,18 +14,19 @@ from web_scraping.scraper import Scraper
 
 def main():
     scrapers = [
-        aos_fatos_scraper,
-        piaui_scraper,
-        g1_scraper,
-        e_fersas_scraper,
-        boatos_scraper,
         a_publica_scraper,
         a_publica_truco_scraper,
+        aos_fatos_scraper,
+        boatos_scraper,
+        e_fersas_scraper,
+        g1_scraper,
+        piaui_scraper,
     ]
 
     for scraper in scrapers:
-        entries = scraper.get_feed_entries()
-        print(entries[0])
+        print("=====================================")
+        print(scraper.__class__.__name__)
+        scraper.collect_data()
 
 
 if __name__ == "__main__":
