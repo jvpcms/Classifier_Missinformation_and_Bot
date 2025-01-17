@@ -23,10 +23,11 @@ def main():
         piaui_scraper,
     ]
 
-    for scraper in scrapers:
-        print("=====================================")
-        print(scraper.__class__.__name__)
-        scraper.collect_data()
+    # for scraper in scrapers:
+    scraper = piaui_scraper
+    print("=====================================")
+    print(scraper.__class__.__name__)
+    scraper.collect_data()
 
 
 if __name__ == "__main__":

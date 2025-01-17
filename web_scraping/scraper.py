@@ -43,6 +43,7 @@ class Scraper(ABC):
         article = Article(entry.link)
         article.download()
         article.parse()
+        print(article.text)
 
 
 class AosFatosScraper(Scraper):
