@@ -101,7 +101,7 @@ class G1Scraper(Scraper):
         return entries
 
 
-class EFersasScraper(Scraper):
+class EFarsasScraper(Scraper):
     def __init__(self, news_source: CheckingAgency):
         self.news_source = news_source
 

@@ -7,7 +7,7 @@ def main():
         scrapers.a_publica_truco_scraper,
         scrapers.aos_fatos_scraper,
         scrapers.boatos_scraper,
-        scrapers.e_fersas_scraper,
+        scrapers.e_farsas_scraper,
         scrapers.g1_scraper,
         scrapers.piaui_scraper,
         scrapers.checamos_scraper,
