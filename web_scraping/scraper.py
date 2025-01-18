@@ -1,11 +1,12 @@
 from abc import ABC
 from feedparser import parse
-from feedparser.encodings import re
 import requests
 from bs4 import BeautifulSoup
 from dataclasses import dataclass
-import urllib.request
 from newspaper import Article
+from typing import Union
+
+from web_scraping.news_sources.news_sources import CheckingAgency, VirtualMedia
 
 
 def print_dict_keys(d: dict, identation: int = 0):
@@ -22,14 +23,16 @@ class FeedEntry:
 
 
 class Scraper(ABC):
-    feed_url: str
+    news_source: Union[CheckingAgency, VirtualMedia]
 
-    def __init__(self, feed_url: str):
-        self.feed_url = feed_url
+    def __init__(self):
+        raise NotImplementedError("This class is not meant to be instantiated")
 
     def get_feed_entries(self) -> list[FeedEntry]:
+        """Retrieve feed entries from a given source"""
+
         entries: list[FeedEntry] = []
-        feed = parse(self.feed_url)
+        feed = parse(self.news_source.url)
 
         for entry in feed.entries:
             entries.append(FeedEntry(title=entry.title, link=entry.link))
@@ -37,35 +40,40 @@ class Scraper(ABC):
         return entries
 
     def collect_data(self):
+        """Retrieve title, description and label from each feed entry"""
+
         entries = self.get_feed_entries()
+
+        if len(entries) == 0:
+            print("No entries found")
+            return
 
         entry = entries[0]
         article = Article(entry.link)
         article.download()
         article.parse()
-        print(article.text)
+        print(article.title)
 
 
 class AosFatosScraper(Scraper):
-    def __init__(self):
-        super().__init__(feed_url="https://aosfatos.org/noticias/feed/")
+    def __init__(self, news_source: CheckingAgency):
+        self.news_source = news_source
 
 
 class PiauiScraper(Scraper):
-    def __init__(self):
-        super().__init__(feed_url="https://piaui.folha.uol.com.br/lupa/feed/")
+    # TODO: Unable to open articles
+    def __init__(self, news_source: CheckingAgency):
+        self.news_source = news_source
 
 
 class G1Scraper(Scraper):
-    def __init__(self):
-        super().__init__(
-            feed_url="https://g1.globo.com/fato-ou-fake/",
-        )
+    def __init__(self, news_source: CheckingAgency):
+        self.news_source = news_source
 
     # Override
     def get_feed_entries(self) -> list[FeedEntry]:
         entries: list[FeedEntry] = []
-        feed_content = requests.get(self.feed_url).content
+        feed_content = requests.get(self.news_source.url).content
         soup = BeautifulSoup(feed_content, "html.parser")
 
         # Feed entries are in the h2 tags
@@ -94,34 +102,26 @@ class G1Scraper(Scraper):
 
 
 class EFersasScraper(Scraper):
-    def __init__(self):
-        super().__init__(
-            feed_url="https://www.e-farsas.com/feed",
-        )
+    def __init__(self, news_source: CheckingAgency):
+        self.news_source = news_source
 
 
 class BoatosScraper(Scraper):
-    def __init__(self):
-        super().__init__(
-            feed_url="https://www.boatos.org/feed",
-        )
+    def __init__(self, news_source: CheckingAgency):
+        self.news_source = news_source
 
 
 class APublicaScraper(Scraper):
-    def __init__(self):
-        super().__init__(
-            feed_url="https://apublica.org/feed/",
-        )
+    def __init__(self, news_source: CheckingAgency):
+        self.news_source = news_source
 
 
 class APublicaTrucoScraper(Scraper):
-    def __init__(self):
-        super().__init__(
-            feed_url="https://apublica.org/tag/truco/feed/",
-        )
+    def __init__(self, news_source: CheckingAgency):
+        self.news_source = news_source
 
 
 class ChecamosScraper(Scraper):
-    # TODO: Unable to make request
-    def __init__(self):
-        super().__init__(feed_url="https://checamos.afp.com")
+    # TODO: Unable to make initial request
+    def __init__(self, news_source: CheckingAgency):
+        self.news_source = news_source
