@@ -44,7 +44,7 @@ class NewsSourcesCollection:
         )
 
         self.checamos = CheckingAgency(
-            url="https://checamos.afp.com/rss.xml",
+            url="https://checamos.afp.com/",
         )
 
         self.g1_tech = VirtualMedia(
