@@ -40,7 +40,7 @@ class NewsSourcesCollection:
         )
 
         self.a_publica_truco = CheckingAgency(
-            url="https://apublica.org/feed/truco/",
+            url="https://apublica.org/tag/truco/feed/",
         )
 
         self.checamos = CheckingAgency(
