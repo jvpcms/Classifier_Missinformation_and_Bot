@@ -8,6 +8,9 @@ from web_scraping.scrapers.scraper import (
     APublicaScraper,
     APublicaTrucoScraper,
     ChecamosScraper,
+    G1EduScraper,
+    G1EconomiaScraper,
+    G1TechScraper,
 )
 
 
@@ -20,6 +23,9 @@ class ScraperCollection:
     a_publica_scraper: APublicaScraper
     a_publica_truco_scraper: APublicaTrucoScraper
     checamos_scraper: ChecamosScraper
+    g1_edu_scraper: G1EduScraper
+    g1_economia_scraper: G1EconomiaScraper
+    g1_tech_scraper: G1TechScraper
 
     def __init__(self, news_sources_collection: NewsSourcesCollection):
         self.aos_fatos_scraper = AosFatosScraper(news_sources_collection.aos_fatos)
@@ -32,6 +38,11 @@ class ScraperCollection:
             news_sources_collection.a_publica_truco
         )
         self.checamos_scraper = ChecamosScraper(news_sources_collection.checamos)
+        self.g1_edu_scraper = G1EduScraper(news_sources_collection.g1_edu)
+        self.g1_economia_scraper = G1EconomiaScraper(
+            news_sources_collection.g1_economia
+        )
+        self.g1_tech_scraper = G1TechScraper(news_sources_collection.g1_tech)
 
 
 def get_scrapers():

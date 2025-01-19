@@ -1,4 +1,4 @@
-from web_scraping.news_sources.news_sources import CheckingAgency
+from web_scraping.news_sources.news_sources import CheckingAgency, VirtualMedia
 
 
 class NewsSourcesCollection:
@@ -10,6 +10,9 @@ class NewsSourcesCollection:
     a_publica: CheckingAgency
     a_publica_truco: CheckingAgency
     checamos: CheckingAgency
+    g1_tech: VirtualMedia
+    g1_edu: VirtualMedia
+    g1_economia: VirtualMedia
 
     def __init__(self):
         self.aos_fatos = CheckingAgency(
@@ -42,6 +45,18 @@ class NewsSourcesCollection:
 
         self.checamos = CheckingAgency(
             url="https://checamos.afp.com/rss.xml",
+        )
+
+        self.g1_tech = VirtualMedia(
+            url="https://g1.globo.com/rss/g1/tecnologia/",
+        )
+
+        self.g1_edu = VirtualMedia(
+            url="https://g1.globo.com/rss/g1/educacao/",
+        )
+
+        self.g1_economia = VirtualMedia(
+            url="https://g1.globo.com/rss/g1/economia/",
         )
 
 

@@ -125,3 +125,18 @@ class ChecamosScraper(Scraper):
     # TODO: Unable to make initial request
     def __init__(self, news_source: CheckingAgency):
         self.news_source = news_source
+
+
+class G1TechScraper(Scraper):
+    def __init__(self, news_source: VirtualMedia):
+        self.news_source = news_source
+
+
+class G1EduScraper(Scraper):
+    def __init__(self, news_source: VirtualMedia):
+        self.news_source = news_source
+
+
+class G1EconomiaScraper(Scraper):
+    def __init__(self, news_source: VirtualMedia):
+        self.news_source = news_source
