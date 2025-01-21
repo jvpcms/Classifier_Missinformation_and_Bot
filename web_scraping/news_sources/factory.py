@@ -24,7 +24,7 @@ class NewsSourcesCollection:
         )
 
         self.g1 = CheckingAgency(
-            url="https://g1.globo.com/fato-ou-fake/",
+            url="https://g1.globo.com/rss/g1/fato-ou-fake/",
         )
 
         self.e_farsas = CheckingAgency(

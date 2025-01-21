@@ -18,10 +18,10 @@ def main():
         scrapers.g1_economia_scraper,
     ]
 
-    for scraper in scrapers_virtual_media_list:
-        print("=====================================")
-        print(scraper.__class__.__name__)
-        scraper.get_feed_entries()
+    scraper = scrapers.g1_scraper
+    print("=====================================")
+    print(scraper.__class__.__name__)
+    scraper.collect_data()
 
 
 if __name__ == "__main__":

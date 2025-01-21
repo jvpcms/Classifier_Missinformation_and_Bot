@@ -33,7 +33,6 @@ class Scraper(ABC):
 
         entries: list[FeedEntry] = []
         feed = parse(self.news_source.url)
-        print(feed.entries[0])
 
         for entry in feed.entries:
             entries.append(FeedEntry(title=entry.title, link=entry.link))
@@ -69,39 +68,6 @@ class PiauiScraper(Scraper):
 class G1Scraper(Scraper):
     def __init__(self, news_source: CheckingAgency):
         self.news_source = news_source
-
-    # Override
-    def get_feed_entries(self) -> list[FeedEntry]:
-        """Parse HTML for G1 edge case"""
-
-        entries: list[FeedEntry] = []
-        feed_content = requests.get(self.news_source.url).content
-        soup = BeautifulSoup(feed_content, "html.parser")
-
-        # Feed entries are in the h2 tags
-        # TODO: This is not reliable
-        # TODO: Check if 'https://g1.globo.com/rss/g1/fato-ou-fake/' is a better source
-        h2_tags = soup.select("h2")
-
-        for entry in h2_tags:
-            link_tag = entry.select_one("a")
-            title_tag = entry.select_one("p")
-
-            if title_tag is None or link_tag is None:
-                continue
-
-            title = title_tag.get_text()
-            link = link_tag.get("href")
-
-            if link is None:
-                continue
-
-            if isinstance(link, list):
-                link = link[0]
-
-            entries.append(FeedEntry(title=title, link=link))
-
-        return entries
 
 
 class EFarsasScraper(Scraper):
