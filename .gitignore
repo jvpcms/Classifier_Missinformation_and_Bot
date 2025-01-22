@@ -3,3 +3,5 @@
 
 reddit_api/shelve/*
 !reddit_api/shelve/.gitkeep
+
+testing_data/*
