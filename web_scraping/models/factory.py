@@ -23,7 +23,7 @@ class NewsSourcesCollection:
         )
 
         self.piaui = NewsSource(
-            feed_url="https://piaui.folha.uol.com.br/feed/",
+            feed_url="https://piaui.folha.uol.com.br/lupa/feed/",
             base_url="https://piaui.folha.uol.com.br/",
             country="br",
             source_type="checking_agency",
