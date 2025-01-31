@@ -41,6 +41,8 @@ class NewsSourcesCollection:
             base_url="https://www.e-farsas.com/",
             country="br",
             source_type="checking_agency",
+            feed_url_true_news="https://www.e-farsas.com/secoes/verdadeiro-2/feed",
+            feed_url_fake_news="https://www.e-farsas.com/secoes/falso-2/feed",
         )
 
         self.boatos = NewsSource(

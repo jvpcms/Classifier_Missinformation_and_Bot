@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from time import sleep
 from typing import Union
 from feedparser import parse
 from newspaper import Article
@@ -11,6 +12,7 @@ from custom_logging import logger
 import re
 import json
 from xml.sax import saxutils
+import urllib.parse
 
 
 def print_dict_keys(d: dict, identation: int = 0):
@@ -57,7 +59,7 @@ def pre_processing(str) -> dict:
             new_dict = json.loads(new_string)
             return {"reviewRating": new_dict}
         except Exception as e:
-            logger.error(f"Error while parsing json: {e}")
+            logger.error(f"Error while parsing json / pre_processing: {e}")
             return {}
 
     if (
@@ -79,7 +81,11 @@ class Scraper(ABC):
     def get_news_feed_entries(self) -> list[dict]:
         """Retrieve feed entries from a given source"""
 
-        feed = parse(self.news_source.feed_url)
+        try:
+            feed = parse(self.news_source.feed_url)
+        except Exception as e:
+            logger.error(f"Error while parsing feed: {e}")
+            return []
 
         return feed.entries
 
@@ -94,6 +100,9 @@ class Scraper(ABC):
         article.download()
         article.parse()
 
+        with open("testing_data/article.html", "w") as f:
+            f.write(article.html)
+
         return article.__dict__
 
     def collect_labeled_feed_entries(self) -> list[LabeledNews]:
@@ -101,13 +110,9 @@ class Scraper(ABC):
 
         entries = self.get_news_feed_entries()
 
-        if len(entries) == 0:
-            return []
-
         feed_labeled_news: list[LabeledNews] = []
 
         for entry in entries:
-            print(entry["title"])
             label = self.label_feed_entry(entry)
             labeled_news = LabeledNews.from_dict(
                 {**entry, "label": label, "url_source": self.news_source.base_url}
@@ -126,7 +131,12 @@ class AosFatosScraper(Scraper):
         """Label feed entry as true or false"""
         # TODO: solve for problematic claim dict
 
-        response = requests.get(entry["link"])
+        try:
+            response = requests.get(entry["link"])
+        except Exception as e:
+            logger.error(f"Error / label_feed_entry / {self.__class__.__name__}: {e}")
+            return None
+
         content = BeautifulSoup(response.content, "html.parser")
         ld_json = content.find_all("script", attrs={"type": "application/ld+json"})
 
@@ -136,7 +146,12 @@ class AosFatosScraper(Scraper):
         claim_review = ld_json[0]
         claim_dict = pre_processing(claim_review.get_text(strip=True))
 
-        return claim_dict.get("reviewRating", {}).get("alternateName")
+        alternate_name = claim_dict.get("reviewRating", {}).get("alternateName")
+
+        if alternate_name == "falso":
+            return False
+
+        return None
 
 
 class PiauiScraper(Scraper):
@@ -147,16 +162,9 @@ class PiauiScraper(Scraper):
         """Label feed entry as true or false"""
 
         response = requests.get(entry["link"])
-        content = BeautifulSoup(response.content, "html.parser")
-        ld_json = content.find_all("script", attrs={"type": "application/ld+json"})
+        print(response.text)
 
-        if len(ld_json) == 0:
-            return None
-
-        claim_review = ld_json[0]
-        claim_dict = pre_processing(claim_review.get_text(strip=True))
-        # print(entry["link"])
-        # print(claim_dict)
+        return None
 
 
 class G1Scraper(Scraper):
@@ -173,9 +181,30 @@ class EFarsasScraper(Scraper):
     def __init__(self, news_source: NewsSource):
         self.news_source = news_source
 
+    def collect_labeled_feed_entries(self) -> list[LabeledNews]:
+        """Retrieve feed entries and label them"""
+
+        true_entries = parse(self.news_source.feed_url_true_news).entries
+        fake_entries = parse(self.news_source.feed_url_fake_news).entries
+
+        feed_labeled_news: list[LabeledNews] = []
+
+        for entry in true_entries:
+            labeled_news = LabeledNews.from_dict(
+                {**entry, "label": True, "url_source": self.news_source.base_url}
+            )
+            feed_labeled_news.append(labeled_news)
+
+        for entry in fake_entries:
+            labeled_news = LabeledNews.from_dict(
+                {**entry, "label": False, "url_source": self.news_source.base_url}
+            )
+            feed_labeled_news.append(labeled_news)
+
+        return feed_labeled_news
+
     def label_feed_entry(self, entry: dict) -> Union[bool, None]:
         """Label feed entry as true or false"""
-
         return None
 
 
@@ -186,7 +215,23 @@ class BoatosScraper(Scraper):
     def label_feed_entry(self, entry: dict) -> Union[bool, None]:
         """Label feed entry as true or false"""
 
-        return None
+        response = requests.get(entry["link"])
+        content = BeautifulSoup(response.content, "html.parser")
+
+        p_tags = list(content.find_all("p"))
+        p_tags_content = [p.get_text() for p in p_tags]
+
+        try:
+            index = p_tags_content.index("Conclusão")
+            print(p_tags_content[index + 2])
+        except ValueError:
+            pass
+
+        try:
+            p_tags_content.index("Fake news ❌")
+            return False
+        except ValueError:
+            return None
 
 
 class APublicaScraper(Scraper):
@@ -196,6 +241,7 @@ class APublicaScraper(Scraper):
     def label_feed_entry(self, entry: dict) -> Union[bool, None]:
         """Label feed entry as true or false"""
 
+        print(entry["link"])
         return None
 
 
@@ -226,8 +272,7 @@ class G1TechScraper(Scraper):
 
     def label_feed_entry(self, entry: dict) -> Union[bool, None]:
         """Label feed entry as true or false"""
-
-        return None
+        return True
 
 
 class G1EduScraper(Scraper):
@@ -236,8 +281,7 @@ class G1EduScraper(Scraper):
 
     def label_feed_entry(self, entry: dict) -> Union[bool, None]:
         """Label feed entry as true or false"""
-
-        return None
+        return True
 
 
 class G1EconomiaScraper(Scraper):
@@ -246,5 +290,4 @@ class G1EconomiaScraper(Scraper):
 
     def label_feed_entry(self, entry: dict) -> Union[bool, None]:
         """Label feed entry as true or false"""
-
-        return None
+        return True
