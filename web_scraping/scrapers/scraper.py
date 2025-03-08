@@ -122,7 +122,7 @@ class Scraper(ABC):
 
             if (
                 labeled_news.date_published is not None
-                and labeled_news.date_published < date_filter
+                and labeled_news.date_published > date_filter
             ):
                 feed_labeled_news.append(labeled_news)
 
@@ -206,7 +206,7 @@ class EFarsasScraper(Scraper):
 
             if (
                 labeled_news.date_published is not None
-                and labeled_news.date_published < date_filter
+                and labeled_news.date_published > date_filter
             ):
                 feed_labeled_news.append(labeled_news)
 
@@ -217,7 +217,7 @@ class EFarsasScraper(Scraper):
 
             if (
                 labeled_news.date_published is not None
-                and labeled_news.date_published < date_filter
+                and labeled_news.date_published > date_filter
             ):
                 feed_labeled_news.append(labeled_news)
 
