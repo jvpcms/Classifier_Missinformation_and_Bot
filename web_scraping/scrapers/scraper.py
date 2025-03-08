@@ -115,10 +115,9 @@ class Scraper(ABC):
         for entry in entries:
             label = self.label_feed_entry(entry)
             labeled_news = LabeledNews.from_dict(
-                {**entry, "label": label, "url_source": self.news_source.base_url}
+                {**entry, "label": label, "author": self.news_source.base_url}
             )
             feed_labeled_news.append(labeled_news)
-            break
 
         return feed_labeled_news
 
@@ -155,6 +154,7 @@ class AosFatosScraper(Scraper):
 
 
 class PiauiScraper(Scraper):
+    # TODO: Unable to make article request
     def __init__(self, news_source: NewsSource):
         self.news_source = news_source
 
@@ -222,12 +222,6 @@ class BoatosScraper(Scraper):
         p_tags_content = [p.get_text() for p in p_tags]
 
         try:
-            index = p_tags_content.index("Conclusão")
-            print(p_tags_content[index + 2])
-        except ValueError:
-            pass
-
-        try:
             p_tags_content.index("Fake news ❌")
             return False
         except ValueError:
@@ -235,6 +229,7 @@ class BoatosScraper(Scraper):
 
 
 class APublicaScraper(Scraper):
+    # TODO: Unable to make article request
     def __init__(self, news_source: NewsSource):
         self.news_source = news_source
 
@@ -246,6 +241,7 @@ class APublicaScraper(Scraper):
 
 
 class APublicaTrucoScraper(Scraper):
+    # TODO: Unable to make article request
     def __init__(self, news_source: NewsSource):
         self.news_source = news_source
 
@@ -256,7 +252,7 @@ class APublicaTrucoScraper(Scraper):
 
 
 class ChecamosScraper(Scraper):
-    # TODO: Unable to make initial request
+    # TODO: Unable to make feed request
     def __init__(self, news_source: NewsSource):
         self.news_source = news_source
 

@@ -39,7 +39,6 @@ def time_struct_to_datetime(ts: time.struct_time | None) -> datetime | None:
 @dataclass
 class LabeledNews:
     url: str
-    url_source: str
     title: str
     author: str
     label: bool
@@ -50,7 +49,6 @@ class LabeledNews:
     def from_dict(d: dict) -> "LabeledNews":
         return LabeledNews(
             url=d["link"],
-            url_source=d["url_source"],
             title=d["title"],
             author=d.get("author", ""),
             label=d["label"],
@@ -61,7 +59,6 @@ class LabeledNews:
     def to_dict(self) -> dict:
         return {
             "url": self.url,
-            "url_source": self.url_source,
             "title": self.title,
             "author": self.author,
             "label": self.label,
