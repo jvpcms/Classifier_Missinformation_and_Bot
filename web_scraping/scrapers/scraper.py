@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
-from time import sleep
 from typing import Union
-from feedparser import parse
+from feedparser import FeedParserDict, parse
 from newspaper import Article
 from newspaper.article import requests
 from newspaper.utils import BeautifulSoup
@@ -78,7 +77,7 @@ class Scraper(ABC):
     def __init__(self):
         raise NotImplementedError("This class is not meant to be instantiated")
 
-    def get_news_feed_entries(self) -> list[dict]:
+    def get_news_feed_entries(self) -> list[FeedParserDict]:
         """Retrieve feed entries from a given source"""
 
         try:

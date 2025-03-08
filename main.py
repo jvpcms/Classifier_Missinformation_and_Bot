@@ -5,59 +5,33 @@ from web_scraping.models.labeled_news import LabeledNews
 from web_scraping.scrapers.scraper import Scraper
 
 
-# feedParser
-# id
-# url
-# title
-# date (published parsed)
-# data rotulacao (created at)
-# author
-#
-# source
-# tipo (agencia / midia)
-# url source
-# pais
-
-# Need
-# rotulacao (fake, true)
-
-
-def is_field_empty(field) -> bool:
-    if field is None:
-        return True
-    if field == "":
-        return True
-    if field == []:
-        return True
-    if field == {}:
-        return True
-    if field == [""]:
-        return True
-    return False
-
-
 def main():
-    pass
-
-    # labeled_news = scrapers_repo.aos_fatos_scraper.collect_labeled_feed_entries()
-    # labeled_news = scrapers_repo.g1_scraper.collect_labeled_feed_entries()
-    # labeled_news = scrapers_repo.e_farsas_scraper.collect_labeled_feed_entries()
-    # labeled_news = scrapers_repo.boatos_scraper.collect_labeled_feed_entries()
-    # labeled_news = scrapers_repo.g1_edu_scraper.collect_labeled_feed_entries()
-    # labeled_news = scrapers_repo.g1_economia_scraper.collect_labeled_feed_entries()
-    # labeled_news = scrapers_repo.g1_tech_scraper.collect_labeled_feed_entries()
-
     # labeled_news = scrapers_repo.piaui_scraper.collect_labeled_feed_entries()
     # labeled_news = scrapers_repo.a_publica_scraper.collect_labeled_feed_entries()
     # labeled_news = scrapers_repo.a_publica_truco_scraper.collect_labeled_feed_entries()
 
     # labeled_news = scrapers_repo.checamos_scraper.collect_labeled_feed_entries()
+    #
 
-    # for news in labeled_news:
-    #     print(news.title)
-    #     print(news.url)
-    #     print(news.label)
-    #     print("\n")
+    scrapers: list[Scraper] = [
+        scrapers_repo.aos_fatos_scraper,
+        scrapers_repo.g1_scraper,
+        scrapers_repo.e_farsas_scraper,
+        scrapers_repo.boatos_scraper,
+        scrapers_repo.g1_edu_scraper,
+        scrapers_repo.g1_economia_scraper,
+        scrapers_repo.g1_tech_scraper,
+    ]
+
+    for scraper in scrapers:
+        labeled_news = scraper.collect_labeled_feed_entries()
+        print("\n" + "=" * 80)
+        print(f"\nScraper: {scraper.news_source.base_url}")
+        print(f"\nNumber of labeled news: {len(labeled_news)}")
+
+        if labeled_news:
+            print("\nFirst labeled news:")
+            print(json.dumps(labeled_news[0].to_dict(), indent=4))
 
 
 if __name__ == "__main__":
