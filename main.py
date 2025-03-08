@@ -11,7 +11,15 @@ from database import repos
 labeled_news_repo = repos.labeled_news
 news_sources_repo = repos.news_sources
 
-DATE_FILTER = datetime.now() - timedelta(days=7)
+DATE_LIMIT = datetime.now() - timedelta(days=7)
+
+
+def filter_function(labeled_news: LabeledNews) -> bool:
+    """Filter labeled news by date"""
+
+    return (labeled_news.date_published is not None) and (
+        labeled_news.date_published > DATE_LIMIT
+    )
 
 
 def main():
@@ -32,6 +40,11 @@ def main():
             news_sources_repo.insert(scraper.news_source)
         except pymongo_errors.DuplicateKeyError:
             pass
+
+        labeled_news = scraper.collect_labeled_feed_entries(filter_function)
+
+        for entry in labeled_news:
+            print(entry.date_published)
 
 
 if __name__ == "__main__":

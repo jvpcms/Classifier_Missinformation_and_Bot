@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Union
+from typing import Union, Callable
 from feedparser import FeedParserDict, parse
 from newspaper import Article
 from newspaper.article import requests
@@ -104,10 +104,12 @@ class Scraper(ABC):
 
         return article.__dict__
 
-    def collect_labeled_feed_entries(self, date_filter: datetime) -> list[LabeledNews]:
+    def collect_labeled_feed_entries(
+        self, filter: Callable[[LabeledNews], bool]
+    ) -> list[LabeledNews]:
         """Retrieve feed entries and label them
 
-        * date_filter: datetime object, get news only after this date
+        * filter: Function that filters the labeled news
         """
 
         entries = self.get_news_feed_entries()
@@ -120,10 +122,7 @@ class Scraper(ABC):
                 {**entry, "label": label, "author": self.news_source.base_url}
             )
 
-            if (
-                labeled_news.date_published is not None
-                and labeled_news.date_published > date_filter
-            ):
+            if filter(labeled_news):
                 feed_labeled_news.append(labeled_news)
 
         return feed_labeled_news
@@ -188,10 +187,12 @@ class EFarsasScraper(Scraper):
     def __init__(self, news_source: NewsSource):
         self.news_source = news_source
 
-    def collect_labeled_feed_entries(self, date_filter: datetime) -> list[LabeledNews]:
+    def collect_labeled_feed_entries(
+        self, filter: Callable[[LabeledNews], bool]
+    ) -> list[LabeledNews]:
         """Retrieve feed entries and label them
 
-        * date_filter: datetime object, get news only after this date
+        * filter: Function that filters the labeled news
         """
 
         true_entries = parse(self.news_source.feed_url_true_news).entries
@@ -204,10 +205,7 @@ class EFarsasScraper(Scraper):
                 {**entry, "label": True, "url_source": self.news_source.base_url}
             )
 
-            if (
-                labeled_news.date_published is not None
-                and labeled_news.date_published > date_filter
-            ):
+            if filter(labeled_news):
                 feed_labeled_news.append(labeled_news)
 
         for entry in fake_entries:
@@ -215,10 +213,7 @@ class EFarsasScraper(Scraper):
                 {**entry, "label": False, "url_source": self.news_source.base_url}
             )
 
-            if (
-                labeled_news.date_published is not None
-                and labeled_news.date_published > date_filter
-            ):
+            if filter(labeled_news):
                 feed_labeled_news.append(labeled_news)
 
         return feed_labeled_news
