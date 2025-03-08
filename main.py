@@ -1,15 +1,17 @@
+from pymongo import errors as pymongo_errors
 from datetime import datetime, timedelta
+
 from web_scraping import scrapers_repo
 
 from web_scraping.models.labeled_news import LabeledNews
 from web_scraping.scrapers.scraper import Scraper
 
-# from database import repos
-#
-# labeled_news_repo = repos.labeled_news
-# news_sources_repo = repos.news_sources
+from database import repos
 
-DATE_FILTER = datetime.now() - timedelta(days=1)
+labeled_news_repo = repos.labeled_news
+news_sources_repo = repos.news_sources
+
+DATE_FILTER = datetime.now() - timedelta(days=7)
 
 
 def main():
@@ -26,9 +28,11 @@ def main():
     labeled_news: list[LabeledNews] = []
 
     for scraper in scrapers:
-        labeled_news = labeled_news + scraper.collect_labeled_feed_entries(DATE_FILTER)
+        try:
+            news_sources_repo.insert(scraper.news_source)
+        except pymongo_errors.DuplicateKeyError:
+            pass
 
 
 if __name__ == "__main__":
-    print(DATE_FILTER)
     main()

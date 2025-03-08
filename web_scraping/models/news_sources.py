@@ -20,3 +20,14 @@ class NewsSource:
             "feed_url_true_news": self.feed_url_true_news,
             "feed_url_fake_news": self.feed_url_fake_news,
         }
+
+    @staticmethod
+    def from_dict(data: dict) -> "NewsSource":
+        return NewsSource(
+            feed_url=data["feed_url"],
+            base_url=data["base_url"],
+            country=data["country"],
+            source_type=data["source_type"],
+            feed_url_true_news=data.get("feed_url_true_news"),
+            feed_url_fake_news=data.get("feed_url_fake_news"),
+        )
