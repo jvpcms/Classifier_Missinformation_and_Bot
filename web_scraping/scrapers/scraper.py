@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 from typing import Union
 from feedparser import FeedParserDict, parse
 from newspaper import Article
@@ -11,7 +12,6 @@ from custom_logging import logger
 import re
 import json
 from xml.sax import saxutils
-import urllib.parse
 
 
 def print_dict_keys(d: dict, identation: int = 0):
@@ -104,8 +104,11 @@ class Scraper(ABC):
 
         return article.__dict__
 
-    def collect_labeled_feed_entries(self) -> list[LabeledNews]:
-        """Retrieve feed entries and label them"""
+    def collect_labeled_feed_entries(self, date_filter: datetime) -> list[LabeledNews]:
+        """Retrieve feed entries and label them
+
+        * date_filter: datetime object, get news only after this date
+        """
 
         entries = self.get_news_feed_entries()
 
@@ -116,7 +119,12 @@ class Scraper(ABC):
             labeled_news = LabeledNews.from_dict(
                 {**entry, "label": label, "author": self.news_source.base_url}
             )
-            feed_labeled_news.append(labeled_news)
+
+            if (
+                labeled_news.date_published is not None
+                and labeled_news.date_published < date_filter
+            ):
+                feed_labeled_news.append(labeled_news)
 
         return feed_labeled_news
 
@@ -180,8 +188,11 @@ class EFarsasScraper(Scraper):
     def __init__(self, news_source: NewsSource):
         self.news_source = news_source
 
-    def collect_labeled_feed_entries(self) -> list[LabeledNews]:
-        """Retrieve feed entries and label them"""
+    def collect_labeled_feed_entries(self, date_filter: datetime) -> list[LabeledNews]:
+        """Retrieve feed entries and label them
+
+        * date_filter: datetime object, get news only after this date
+        """
 
         true_entries = parse(self.news_source.feed_url_true_news).entries
         fake_entries = parse(self.news_source.feed_url_fake_news).entries
@@ -192,13 +203,23 @@ class EFarsasScraper(Scraper):
             labeled_news = LabeledNews.from_dict(
                 {**entry, "label": True, "url_source": self.news_source.base_url}
             )
-            feed_labeled_news.append(labeled_news)
+
+            if (
+                labeled_news.date_published is not None
+                and labeled_news.date_published < date_filter
+            ):
+                feed_labeled_news.append(labeled_news)
 
         for entry in fake_entries:
             labeled_news = LabeledNews.from_dict(
                 {**entry, "label": False, "url_source": self.news_source.base_url}
             )
-            feed_labeled_news.append(labeled_news)
+
+            if (
+                labeled_news.date_published is not None
+                and labeled_news.date_published < date_filter
+            ):
+                feed_labeled_news.append(labeled_news)
 
         return feed_labeled_news
 
