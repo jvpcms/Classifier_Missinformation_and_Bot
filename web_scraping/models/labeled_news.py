@@ -14,31 +14,6 @@ portuguese_word_tokenize = partial(nltk_word_tokenize, language=config.envs.lang
 portuguese_stopwords = set(nltk_stopwords.words(config.envs.language))
 
 
-# title
-# title_detail
-#      type
-#      language
-#      base
-#      value
-# summary
-# summary_detail
-#      type
-#      language
-#      base
-#      value
-# links
-# link
-# id
-# guidislink
-# tags
-# authors
-# author
-# author_detail
-#      name
-# published
-# published_parsed
-
-
 @dataclass
 class LabeledNews:
     url: str

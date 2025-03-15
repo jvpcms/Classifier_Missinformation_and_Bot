@@ -60,7 +60,7 @@ class Scraper(ABC):
         for entry in entries:
             label = self.label_feed_entry(entry)
             labeled_news = LabeledNews.from_dict(
-                {**entry, "label": label, "source_url": self.news_source.base_url}
+                {**entry, "label": label, "url_source": self.news_source.base_url}
             )
 
             if filter(labeled_news):
@@ -96,20 +96,6 @@ class AosFatosScraper(Scraper):
 
         if alternate_name == "falso":
             return False
-
-        return None
-
-
-class PiauiScraper(Scraper):
-    # TODO: Unable to make article request
-    def __init__(self, news_source: NewsSource):
-        self.news_source = news_source
-
-    def label_feed_entry(self, entry: dict) -> Union[bool, None]:
-        """Label feed entry as true or false"""
-
-        response = requests.get(entry["link"])
-        print(response.text)
 
         return None
 
@@ -192,40 +178,6 @@ class BoatosScraper(Scraper):
             return False
         except ValueError:
             return None
-
-
-class APublicaScraper(Scraper):
-    # TODO: Unable to make article request
-    def __init__(self, news_source: NewsSource):
-        self.news_source = news_source
-
-    def label_feed_entry(self, entry: dict) -> Union[bool, None]:
-        """Label feed entry as true or false"""
-
-        print(entry["link"])
-        return None
-
-
-class APublicaTrucoScraper(Scraper):
-    # TODO: Unable to make article request
-    def __init__(self, news_source: NewsSource):
-        self.news_source = news_source
-
-    def label_feed_entry(self, entry: dict) -> Union[bool, None]:
-        """Label feed entry as true or false"""
-
-        return None
-
-
-class ChecamosScraper(Scraper):
-    # TODO: Unable to make feed request
-    def __init__(self, news_source: NewsSource):
-        self.news_source = news_source
-
-    def label_feed_entry(self, entry: dict) -> Union[bool, None]:
-        """Label feed entry as true or false"""
-
-        return None
 
 
 class G1TechScraper(Scraper):
