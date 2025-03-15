@@ -2,6 +2,16 @@ from dataclasses import dataclass
 from datetime import datetime
 import time
 
+from web_scraping.config.factory import get_config
+
+from functools import partial
+from nltk.tokenize import word_tokenize as nltk_word_tokenize
+from nltk.corpus import stopwords as nltk_stopwords
+
+config = get_config()
+portuguese_word_tokenize = partial(nltk_word_tokenize, language=config.envs.language)
+portuguese_stopwords = set(nltk_stopwords.words(config.envs.language))
+
 
 # title
 # title_detail
