@@ -202,7 +202,12 @@ class EFarsasScraper(Scraper):
 
         for entry in true_entries:
             labeled_news = LabeledNews.from_dict(
-                {**entry, "label": True, "url_source": self.news_source.base_url}
+                {
+                    **entry,
+                    "label": True,
+                    "url_source": self.news_source.base_url,
+                    "author": self.news_source.base_url,
+                }
             )
 
             if filter(labeled_news):
@@ -210,7 +215,12 @@ class EFarsasScraper(Scraper):
 
         for entry in fake_entries:
             labeled_news = LabeledNews.from_dict(
-                {**entry, "label": False, "url_source": self.news_source.base_url}
+                {
+                    **entry,
+                    "label": False,
+                    "url_source": self.news_source.base_url,
+                    "author": self.news_source.base_url,
+                }
             )
 
             if filter(labeled_news):
