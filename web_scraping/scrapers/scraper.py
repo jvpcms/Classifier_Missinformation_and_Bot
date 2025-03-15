@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from datetime import datetime
 from typing import Union, Callable
 from feedparser import FeedParserDict, parse
 from newspaper import Article
@@ -119,7 +118,7 @@ class Scraper(ABC):
         for entry in entries:
             label = self.label_feed_entry(entry)
             labeled_news = LabeledNews.from_dict(
-                {**entry, "label": label, "author": self.news_source.base_url}
+                {**entry, "label": label, "source_url": self.news_source.base_url}
             )
 
             if filter(labeled_news):
@@ -206,7 +205,7 @@ class EFarsasScraper(Scraper):
                     **entry,
                     "label": True,
                     "url_source": self.news_source.base_url,
-                    "author": self.news_source.base_url,
+                    "source_url": self.news_source.base_url,
                 }
             )
 
@@ -219,7 +218,7 @@ class EFarsasScraper(Scraper):
                     **entry,
                     "label": False,
                     "url_source": self.news_source.base_url,
-                    "author": self.news_source.base_url,
+                    "source_url": self.news_source.base_url,
                 }
             )
 

@@ -40,7 +40,7 @@ def time_struct_to_datetime(ts: time.struct_time | None) -> datetime | None:
 class LabeledNews:
     url: str
     title: str
-    author: str
+    source_url: str
     label: bool
     date_published: datetime | None
     date_added: datetime
@@ -50,7 +50,7 @@ class LabeledNews:
         return LabeledNews(
             url=d["link"],
             title=d["title"],
-            author=d.get("author", ""),
+            source_url=d["url_source"],
             label=d["label"],
             date_published=time_struct_to_datetime(d.get("published_parsed", None)),
             date_added=datetime.now(),
@@ -60,7 +60,7 @@ class LabeledNews:
         return {
             "url": self.url,
             "title": self.title,
-            "author": self.author,
+            "source_url": self.source_url,
             "label": self.label,
             "date_added": self.date_added.timestamp(),
             "date_published": (
