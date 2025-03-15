@@ -1,12 +1,13 @@
 from dataclasses import dataclass
 from datetime import datetime
-import time
 
 from web_scraping.config.factory import get_config
 
 from functools import partial
 from nltk.tokenize import word_tokenize as nltk_word_tokenize
 from nltk.corpus import stopwords as nltk_stopwords
+
+from utils.time import time_struct_to_datetime
 
 config = get_config()
 portuguese_word_tokenize = partial(nltk_word_tokenize, language=config.envs.language)
@@ -36,14 +37,6 @@ portuguese_stopwords = set(nltk_stopwords.words(config.envs.language))
 #      name
 # published
 # published_parsed
-
-
-def time_struct_to_datetime(ts: time.struct_time | None) -> datetime | None:
-    """Convert time.struct_time to datetime"""
-    if ts is None:
-        return None
-
-    return datetime.fromtimestamp(time.mktime(ts))
 
 
 @dataclass
@@ -79,3 +72,6 @@ class LabeledNews:
                 else None
             ),
         }
+
+    def get_search_query(self) -> str:
+        return f"{self.title} {self.source_url}"
