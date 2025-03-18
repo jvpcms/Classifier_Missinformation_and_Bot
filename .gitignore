@@ -5,6 +5,7 @@ reddit_api/shelve/*
 !reddit_api/shelve/.gitkeep
 
 testing_data/*
+nltk_data/*
 
 notes.txt
 test.py

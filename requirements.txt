@@ -8,3 +8,4 @@ lxml_html_clean==0.4.1
 newspaper3k==0.2.8
 structlog==25.1.0
 nltk==3.9.1
+atproto==0.0.59
