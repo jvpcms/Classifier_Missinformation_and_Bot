@@ -4,12 +4,14 @@ from datetime import datetime
 from web_scraping.config.factory import get_config
 
 from functools import partial
+from nltk.data import path as nltk_path
 from nltk.tokenize import word_tokenize as nltk_word_tokenize
 from nltk.corpus import stopwords as nltk_stopwords
 
 from utils.time import time_struct_to_datetime
 
 config = get_config()
+nltk_path.append(config.envs.nltk_data_path)
 portuguese_word_tokenize = partial(nltk_word_tokenize, language=config.envs.language)
 portuguese_stopwords = set(nltk_stopwords.words(config.envs.language))
 
