@@ -1,6 +1,6 @@
 from pymongo.synchronous.collection import Collection
 from pymongo.synchronous.database import Database
-from reddit_api.models.user_model import User
+from social_media_api.models.user_model import User
 
 
 class UserRepo:

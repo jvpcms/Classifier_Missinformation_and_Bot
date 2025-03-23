@@ -1,7 +1,7 @@
-from reddit_api.utils.factory import Utils, get_utils
-from reddit_api.config.factory import Config, get_config
+from social_media_api.utils.factory import Utils, get_utils
+from social_media_api.config.factory import Config, get_config
 
-from reddit_api.services.reddit_client import RedditClient
+from social_media_api.services.reddit_client import RedditClient
 
 
 class Services:

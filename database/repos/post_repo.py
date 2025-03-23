@@ -1,6 +1,6 @@
 from pymongo.synchronous.collection import Collection
 from pymongo.synchronous.database import Database
-from reddit_api.models.post_model import Post
+from social_media_api.models.post_model import Post
 
 
 class PostRepo:

@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Type, TypeVar, Union, overload
-from reddit_api.models.subreddit_model import Subreddit
-from reddit_api.models.post_model import Post
-from reddit_api.models.user_model import User
+from social_media_api.models.subreddit_model import Subreddit
+from social_media_api.models.post_model import Post
+from social_media_api.models.user_model import User
 
 
 ModelType = TypeVar("ModelType", Subreddit, Post, User)

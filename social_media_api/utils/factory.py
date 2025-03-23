@@ -1,5 +1,5 @@
-from reddit_api.utils.endpoints import Endpoints
-from reddit_api.utils.parser import Parser
+from social_media_api.utils.endpoints import Endpoints
+from social_media_api.utils.parser import Parser
 
 
 class Utils:
