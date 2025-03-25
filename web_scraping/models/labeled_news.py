@@ -21,6 +21,10 @@ class LabeledNews:
     url: str
     title: str
     source_url: str
+    claim_review: str
+    review_body: str
+    best_rating: int
+    rating_value: int
     label: bool
     date_published: datetime | None
     date_added: datetime
@@ -31,6 +35,10 @@ class LabeledNews:
             url=d["link"],
             title=d["title"],
             source_url=d["url_source"],
+            claim_review=d["claim_review"],
+            review_body=d["review_body"],
+            best_rating=d["best_rating"],
+            rating_value=d["rating_value"],
             label=d["label"],
             date_published=time_struct_to_datetime(d.get("published_parsed", None)),
             date_added=datetime.now(),
@@ -41,6 +49,8 @@ class LabeledNews:
             "url": self.url,
             "title": self.title,
             "source_url": self.source_url,
+            "claim_review": self.claim_review,
+            "review_body": self.review_body,
             "label": self.label,
             "date_added": self.date_added.timestamp(),
             "date_published": (
