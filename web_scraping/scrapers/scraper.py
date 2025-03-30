@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import json
 from typing import Union, Callable
 from feedparser import FeedParserDict, parse
 from newspaper import Article
@@ -35,7 +36,7 @@ class Scraper(ABC):
         return feed.entries
 
     @abstractmethod
-    def label_feed_entry(self, entry: dict) -> LabeledNews:
+    def label_feed_entry(self, entry: dict) -> LabeledNews | None:
         """Label feed entry as true or false"""
 
     def get_article_content(self, link: str) -> dict:
@@ -65,7 +66,7 @@ class Scraper(ABC):
         for entry in entries:
             labeled_news = self.label_feed_entry(entry)
 
-            if filter(labeled_news):
+            if labeled_news is not None and filter(labeled_news):
                 feed_labeled_news.append(labeled_news)
 
         return feed_labeled_news
@@ -75,45 +76,91 @@ class AosFatosScraper(Scraper):
     def __init__(self, news_source: NewsSource):
         self.news_source = news_source
 
-    def label_feed_entry(self, entry: dict) -> LabeledNews:
+    def label_feed_entry(self, entry: dict) -> LabeledNews | None:
         """Label feed entry as true or false"""
-        # TODO: solve for problematic claim dict
-
-        label = None
-
         try:
             response = requests.get(entry["link"])
             content = BeautifulSoup(response.content, "html.parser")
-            ld_json = content.find_all("script", attrs={"type": "application/ld+json"})
 
-            if len(ld_json) > 0:
-                claim_review = ld_json[0]
-                claim_dict = pre_processing(claim_review.get_text(strip=True))
+            description = content.find_all("meta", attrs={"name": "description"})
+            if len(description) > 0:
+                description = description[0].get("content")
+            else:
+                description = None
 
-                alternate_name = claim_dict.get("reviewRating", {}).get("alternateName")
-                print(claim_dict.get("reviewRating", {}))
+            claim_reviewed, review_body, best_rating, rating_value, label = (
+                None,
+                None,
+                None,
+                None,
+                None,
+            )
 
-                label = False if alternate_name == "falso" else None
+            for ld in content.find_all("script", attrs={"type": "application/ld+json"}):
+                try:
+                    data = json.loads(ld.get_text(strip=True))
+                    claim_reviewed = claim_reviewed or data.get("claimReviewed")
+                    review_body = review_body or data.get("reviewBody")
 
+                    if "reviewRating" in data:
+                        review_rating = data["reviewRating"]
+                        best_rating = best_rating or review_rating.get("bestRating")
+                        rating_value = rating_value or review_rating.get("ratingValue")
+                        if review_rating.get("alternateName") == "falso":
+                            label = False
+                except json.JSONDecodeError:
+                    continue
+
+            return LabeledNews.from_dict(
+                {
+                    **entry,
+                    "label": label,
+                    "url_source": self.news_source.base_url,
+                    "description": description,
+                    "claim_review": claim_reviewed,
+                    "review_body": review_body,
+                    "best_rating": best_rating,
+                    "rating_value": rating_value,
+                }
+            )
+
+        except requests.RequestException as e:
+            logger.error(f"Network error in label_feed_entry: {e}")
         except Exception as e:
-            logger.error(f"Error / label_feed_entry / {self.__class__.__name__}: {e}")
+            logger.error(f"Error in label_feed_entry: {e}")
 
-        return LabeledNews.from_dict(
-            {**entry, "label": label, "url_source": self.news_source.base_url}
-        )
+        return None
 
 
 class G1Scraper(Scraper):
     def __init__(self, news_source: NewsSource):
         self.news_source = news_source
 
-    def label_feed_entry(self, entry: dict) -> LabeledNews:
+    def label_feed_entry(self, entry: dict) -> LabeledNews | None:
         """Label feed entry as true or false"""
 
-        label = False if "É #FAKE" in entry["title"] else None
+        response = requests.get(entry["link"])
+        content = BeautifulSoup(response.content, "html.parser")
+
+        meta_description = content.find_all("meta", attrs={"name": "description"})
+
+        description = None
+        if len(meta_description) > 0:
+            description = meta_description[0].get("content")
+
+        label = None
+        if "#NÃO É BEM ASSIM" in entry["title"] or "#FAKE" in entry["title"]:
+            label = False
+        elif "#FATO" in entry["title"]:
+            label = True
 
         return LabeledNews.from_dict(
-            {**entry, "label": label, "url_source": self.news_source.base_url}
+            {
+                **entry,
+                "label": label,
+                "url_source": self.news_source.base_url,
+                "description": description,
+            }
         )
 
 
@@ -134,65 +181,119 @@ class EFarsasScraper(Scraper):
 
         feed_labeled_news: list[LabeledNews] = []
 
-        for entry in true_entries:
-            labeled_news = LabeledNews.from_dict(
-                {
-                    **entry,
-                    "label": True,
-                    "url_source": self.news_source.base_url,
-                    "source_url": self.news_source.base_url,
-                }
-            )
+        for entry in fake_entries:
+            labeled_news = self.label_feed_entry(entry)
 
-            if filter(labeled_news):
+            if labeled_news is not None and filter(labeled_news):
+                labeled_news.label = False
                 feed_labeled_news.append(labeled_news)
 
-        for entry in fake_entries:
-            labeled_news = LabeledNews.from_dict(
-                {
-                    **entry,
-                    "label": False,
-                    "url_source": self.news_source.base_url,
-                    "source_url": self.news_source.base_url,
-                }
-            )
+        for entry in true_entries:
+            labeled_news = self.label_feed_entry(entry)
 
-            if filter(labeled_news):
+            if labeled_news is not None and filter(labeled_news):
+                labeled_news.label = True
                 feed_labeled_news.append(labeled_news)
 
         return feed_labeled_news
 
-    def label_feed_entry(self, entry: dict) -> LabeledNews:
+    def label_feed_entry(self, entry: dict) -> LabeledNews | None:
         """Label feed entry as true or false"""
+        try:
+            response = requests.get(entry["link"])
+            content = BeautifulSoup(response.content, "html.parser")
 
-        label = None
+            description = content.find_all("meta", attrs={"name": "description"})
+            if len(description) > 0:
+                description = description[0].get("content")
+            else:
+                description = None
 
-        return LabeledNews.from_dict(
-            {**entry, "label": label, "url_source": self.news_source.base_url}
-        )
+            claim_reviewed, review_body, best_rating, rating_value, label = (
+                None,
+                None,
+                None,
+                None,
+                None,
+            )
+
+            for ld in content.find_all("script", attrs={"type": "application/ld+json"}):
+                try:
+                    data = json.loads(ld.get_text(strip=True))
+
+                    if isinstance(data, dict):
+                        data = [data]
+
+                    for d in data:
+                        claim_reviewed = claim_reviewed or d.get("claimReviewed")
+                        review_body = review_body or d.get("reviewBody")
+
+                        if "reviewRating" in d:
+                            review_rating = d["reviewRating"]
+                            best_rating = best_rating or review_rating.get("bestRating")
+                            rating_value = rating_value or review_rating.get(
+                                "ratingValue"
+                            )
+                            if review_rating.get("alternateName") == "falso":
+                                label = False
+                except json.JSONDecodeError:
+                    continue
+
+            return LabeledNews.from_dict(
+                {
+                    **entry,
+                    "label": label,
+                    "url_source": self.news_source.base_url,
+                    "description": description,
+                    "claim_review": claim_reviewed,
+                    "review_body": review_body,
+                    "best_rating": best_rating,
+                    "rating_value": rating_value,
+                }
+            )
+
+        except requests.RequestException as e:
+            logger.error(f"Network error in label_feed_entry: {e}")
+        except Exception as e:
+            logger.error(f"Error in label_feed_entry: {e}")
+
+        return None
 
 
 class BoatosScraper(Scraper):
+    # TODO: language detection
     def __init__(self, news_source: NewsSource):
         self.news_source = news_source
 
-    def label_feed_entry(self, entry: dict) -> LabeledNews:
+    def label_feed_entry(self, entry: dict) -> LabeledNews | None:
         """Label feed entry as true or false"""
 
         response = requests.get(entry["link"])
         content = BeautifulSoup(response.content, "html.parser")
 
-        p_tags = list(content.find_all("p"))
+        meta_description = content.find_all("meta", attrs={"name": "description"})
+        if len(meta_description) > 0:
+            description = meta_description[0].get("content")
+        else:
+            description = None
+
+        p_tags = content.find_all("p")
         p_tags_content = [p.get_text() for p in p_tags]
 
         try:
             p_tags_content.index("Fake news ❌")
+            p_tags_content.index("Golpe ⚠️")
             label = False
         except ValueError:
             label = None
 
         return LabeledNews.from_dict(
-            {**entry, "label": label, "url_source": self.news_source.base_url}
+            {
+                **entry,
+                "label": label,
+                "url_source": self.news_source.base_url,
+                "description": description,
+            }
         )
 
 
@@ -200,13 +301,25 @@ class G1TechScraper(Scraper):
     def __init__(self, news_source: NewsSource):
         self.news_source = news_source
 
-    def label_feed_entry(self, entry: dict) -> LabeledNews:
+    def label_feed_entry(self, entry: dict) -> LabeledNews | None:
         """Label feed entry as true or false"""
 
-        label = True
+        response = requests.get(entry["link"])
+        content = BeautifulSoup(response.content, "html.parser")
+
+        meta_description = content.find_all("meta", attrs={"name": "description"})
+        if len(meta_description) > 0:
+            description = meta_description[0].get("content")
+        else:
+            description = None
 
         return LabeledNews.from_dict(
-            {**entry, "label": label, "url_source": self.news_source.base_url}
+            {
+                **entry,
+                "label": True,
+                "url_source": self.news_source.base_url,
+                "description": description,
+            }
         )
 
 
@@ -214,13 +327,25 @@ class G1EduScraper(Scraper):
     def __init__(self, news_source: NewsSource):
         self.news_source = news_source
 
-    def label_feed_entry(self, entry: dict) -> LabeledNews:
+    def label_feed_entry(self, entry: dict) -> LabeledNews | None:
         """Label feed entry as true or false"""
 
-        label = True
+        response = requests.get(entry["link"])
+        content = BeautifulSoup(response.content, "html.parser")
+
+        meta_description = content.find_all("meta", attrs={"name": "description"})
+        if len(meta_description) > 0:
+            description = meta_description[0].get("content")
+        else:
+            description = None
 
         return LabeledNews.from_dict(
-            {**entry, "label": label, "url_source": self.news_source.base_url}
+            {
+                **entry,
+                "label": True,
+                "url_source": self.news_source.base_url,
+                "description": description,
+            }
         )
 
 
@@ -228,11 +353,23 @@ class G1EconomiaScraper(Scraper):
     def __init__(self, news_source: NewsSource):
         self.news_source = news_source
 
-    def label_feed_entry(self, entry: dict) -> LabeledNews:
+    def label_feed_entry(self, entry: dict) -> LabeledNews | None:
         """Label feed entry as true or false"""
 
-        label = True
+        response = requests.get(entry["link"])
+        content = BeautifulSoup(response.content, "html.parser")
+
+        meta_description = content.find_all("meta", attrs={"name": "description"})
+        if len(meta_description) > 0:
+            description = meta_description[0].get("content")
+        else:
+            description = None
 
         return LabeledNews.from_dict(
-            {**entry, "label": label, "url_source": self.news_source.base_url}
+            {
+                **entry,
+                "label": True,
+                "url_source": self.news_source.base_url,
+                "description": description,
+            }
         )

@@ -19,13 +19,14 @@ portuguese_stopwords = set(nltk_stopwords.words(config.envs.language))
 @dataclass
 class LabeledNews:
     url: str
-    title: str
     source_url: str
-    claim_review: str
-    review_body: str
-    best_rating: int
-    rating_value: int
-    label: bool
+    title: str | None
+    description: str | None
+    claim_review: str | None
+    review_body: str | None
+    best_rating: int | None
+    rating_value: int | None
+    label: bool | None
     date_published: datetime | None
     date_added: datetime
 
@@ -33,13 +34,14 @@ class LabeledNews:
     def from_dict(d: dict) -> "LabeledNews":
         return LabeledNews(
             url=d["link"],
-            title=d["title"],
             source_url=d["url_source"],
-            claim_review=d["claim_review"],
-            review_body=d["review_body"],
-            best_rating=d["best_rating"],
-            rating_value=d["rating_value"],
-            label=d["label"],
+            title=d.get("title", None),
+            description=d.get("description", None),
+            claim_review=d.get("claim_review", None),
+            review_body=d.get("review_body", None),
+            best_rating=d.get("best_rating", None),
+            rating_value=d.get("rating_value", None),
+            label=d.get("label", None),
             date_published=time_struct_to_datetime(d.get("published_parsed", None)),
             date_added=datetime.now(),
         )
@@ -47,8 +49,9 @@ class LabeledNews:
     def to_dict(self) -> dict:
         return {
             "url": self.url,
-            "title": self.title,
             "source_url": self.source_url,
+            "title": self.title,
+            "description": self.description,
             "claim_review": self.claim_review,
             "review_body": self.review_body,
             "label": self.label,

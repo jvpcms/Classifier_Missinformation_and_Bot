@@ -23,10 +23,10 @@ def extract_specific_key(json_string: str, key: str) -> str:
     return json_string[start : end + 1]
 
 
-def pre_processing(str) -> dict:
+def pre_processing(dict_string: str) -> dict:
     """Pre-process a string to extract a json object"""
 
-    new_string = saxutils.unescape(str.replace("&quot;", ""))
+    new_string = saxutils.unescape(dict_string.replace("&quot;", ""))
     new_string = re.sub(
         "[^A-Za-z0-9 \\!\\@\\#\\$\\%\\&\\*\\:\\,\\.\\;\\:\\-\\_\\\"'\\]\\[\\}\\{\\+\\á\\à\\é\\è\\í\\ì\\ó\\ò\\ú\\ù\\ã\\õ\\â\\ê\\ô\\ç\\|]+",
         "",
