@@ -63,5 +63,8 @@ class LabeledNews:
             ),
         }
 
-    def get_search_query(self) -> str:
-        return f"{self.title} {self.source_url}"
+    def get_search_query(self) -> list[str]:
+        if self.description is None:
+            return []
+
+        return portuguese_word_tokenize(self.description)
