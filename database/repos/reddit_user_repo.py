@@ -1,9 +1,9 @@
 from pymongo.synchronous.collection import Collection
 from pymongo.synchronous.database import Database
-from social_media_api.models.user_model import User
+from social_media_api.models.reddit_user_model import RedditUser
 
 
-class UserRepo:
+class RedditUserRepo:
     collection: Collection
 
     def __init__(self, db: Database):
@@ -12,7 +12,7 @@ class UserRepo:
             "name", unique=True
         )  # use the acctual reddit name as pk
 
-    def insert(self, user: User) -> User:
+    def insert(self, user: RedditUser) -> RedditUser:
         self.collection.insert_one(user.to_dict())
 
         return user

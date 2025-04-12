@@ -2,15 +2,15 @@ from pymongo import MongoClient
 from database.config.factory import Config, get_config
 from database.repos.labeled_news_repo import LabeledNewsRepo
 from database.repos.news_sources import NewsSourcesRepo
-from database.repos.post_repo import PostRepo
+from database.repos.reddit_post_repo import RedditPostRepo
 from database.repos.subreddit_repo import SubredditRepo
-from database.repos.user_repo import UserRepo
+from database.repos.reddit_user_repo import RedditUserRepo
 
 
 class ReposFactory:
     subreddits: SubredditRepo
-    users: UserRepo
-    posts: PostRepo
+    users: RedditUserRepo
+    posts: RedditPostRepo
     labeled_news: LabeledNewsRepo
     news_sources: NewsSourcesRepo
 
@@ -21,8 +21,8 @@ class ReposFactory:
         reddit_database = client.reddit_data
 
         self.subreddits = SubredditRepo(reddit_database)
-        self.users = UserRepo(reddit_database)
-        self.posts = PostRepo(reddit_database)
+        self.users = RedditUserRepo(reddit_database)
+        self.posts = RedditPostRepo(reddit_database)
         self.labeled_news = LabeledNewsRepo(reddit_database)
         self.news_sources = NewsSourcesRepo(reddit_database)
 

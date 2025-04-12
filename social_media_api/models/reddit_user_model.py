@@ -5,7 +5,7 @@ from typing import Any, Dict
 
 
 @dataclass
-class User:
+class RedditUser:
     id: str
     name: str
     display_name: str
@@ -22,8 +22,8 @@ class User:
     created_utc: datetime
 
     @staticmethod
-    def from_dict(response: Dict[str, Any]) -> "User":
-        return User(
+    def from_dict(response: Dict[str, Any]) -> "RedditUser":
+        return RedditUser(
             id=response["data"]["id"],
             name=response["data"]["name"],
             display_name=response["data"]["subreddit"]["display_name"],

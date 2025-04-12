@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class Post:
+class RedditPost:
     id: str
     subreddit: str
     subreddit_name_prefixed: str
@@ -31,8 +31,8 @@ class Post:
     is_video: bool
 
     @staticmethod
-    def from_dict(response: Dict[str, Any]) -> "Post":
-        return Post(
+    def from_dict(response: Dict[str, Any]) -> "RedditPost":
+        return RedditPost(
             id=response["data"]["id"],
             subreddit=response["data"]["subreddit"],
             subreddit_name_prefixed=response["data"]["subreddit_name_prefixed"],
