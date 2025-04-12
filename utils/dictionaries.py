@@ -4,6 +4,10 @@ from xml.sax import saxutils
 
 from custom_logging import logger
 
+# import demjson3
+# raw_json = '{"key": "string with "internal" quotes"}'
+# parsed_data = demjson3.decode(raw_json)
+
 
 def extract_specific_key(json_string: str, key: str) -> str:
     """Search for a specific key in a json string, return the portion of the string containing the key and its value"""

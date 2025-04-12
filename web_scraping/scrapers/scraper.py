@@ -10,13 +10,6 @@ from web_scraping.models.factory import NewsSource
 from web_scraping.models.labeled_news import LabeledNews
 from custom_logging import logger
 
-from utils.dictionaries import pre_processing
-
-
-# labeled_news = LabeledNews.from_dict(
-#     {**entry, "label": label, "url_source": self.news_source.base_url}
-# )
-
 
 class Scraper(ABC):
     news_source: NewsSource
