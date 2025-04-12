@@ -31,7 +31,7 @@ class RedditPost:
     is_video: bool
 
     @staticmethod
-    def from_dict(response: Dict[str, Any]) -> "RedditPost":
+    def instatiate(response: Dict[str, Any]) -> "RedditPost":
         return RedditPost(
             id=response["data"]["id"],
             subreddit=response["data"]["subreddit"],

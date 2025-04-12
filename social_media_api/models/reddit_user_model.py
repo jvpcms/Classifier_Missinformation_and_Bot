@@ -22,7 +22,7 @@ class RedditUser:
     created_utc: datetime
 
     @staticmethod
-    def from_dict(response: Dict[str, Any]) -> "RedditUser":
+    def instantiate(response: Dict[str, Any]) -> "RedditUser":
         return RedditUser(
             id=response["data"]["id"],
             name=response["data"]["name"],

@@ -23,7 +23,7 @@ class Subreddit:
     over18: bool
 
     @staticmethod
-    def from_dict(response: Dict[str, Any]) -> "Subreddit":
+    def instantiate(response: Dict[str, Any]) -> "Subreddit":
         return Subreddit(
             id=response["data"]["id"],
             display_name=response["data"]["display_name"],
