@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from web_scraping.config.factory import get_config
+from config.envconfig import get_config
 
 from functools import partial
 from nltk.data import path as nltk_path

@@ -1,6 +1,6 @@
 from pymongo.synchronous.collection import Collection
 from pymongo.synchronous.database import Database
-from web_scraping.models.news_sources import NewsSource
+from models.news_sources import NewsSource
 
 
 class NewsSourcesRepo:

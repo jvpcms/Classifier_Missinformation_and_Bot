@@ -1,5 +1,5 @@
-from web_scraping.models.factory import NewsSourcesCollection, get_news_sources
-from web_scraping.scrapers.scraper import (
+from models.news_sources import NewsSourcesCollection, get_news_sources
+from web_scraping.scraper import (
     AosFatosScraper,
     G1Scraper,
     EFarsasScraper,

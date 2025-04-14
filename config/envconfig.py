@@ -16,6 +16,16 @@ class EnvConfig:
         return env_var
 
     @property
+    def mongo_username(self) -> str:
+        env_name = "MONGO_INITDB_ROOT_USERNAME"
+        return self._get_env(env_name)
+
+    @property
+    def mongo_password(self) -> str:
+        env_name = "MONGO_INITDB_ROOT_PASSWORD"
+        return self._get_env(env_name)
+
+    @property
     def username(self) -> str:
         env_name = "REDDIT_USERNAME"
         return self._get_env(env_name)
@@ -44,3 +54,24 @@ class EnvConfig:
     def bluesky_secret(self) -> str:
         env_name = "BLUESKY_SECRET"
         return self._get_env(env_name)
+
+    @property
+    def language(self) -> str:
+        env_name = "LANGUAGE"
+        return self._get_env(env_name)
+
+    @property
+    def nltk_data_path(self) -> str:
+        env_name = "NLTK_DATA_PATH"
+        return self._get_env(env_name)
+
+
+class Config:
+    envs: EnvConfig
+
+    def __init__(self):
+        self.envs = EnvConfig()
+
+
+def get_config():
+    return Config()

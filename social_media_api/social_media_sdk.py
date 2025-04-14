@@ -6,17 +6,15 @@ from typing import List, Dict, Any, Optional, TypeVar, Generic
 
 from atproto import Client
 
-from social_media_api.utils.factory import Utils
+from config.envconfig import Config
 
-from social_media_api.config.factory import Config
+from models.bluesky_post_model import BlueSkyPost
+from models.bluesky_user_model import BlueSkyUser
+from models.subreddit_model import Subreddit
+from models.reddit_user_model import RedditUser
+from models.reddit_post_model import RedditPost
 
-from social_media_api.models.bluesky_post_model import BlueSkyPost
-from social_media_api.models.bluesky_user_model import BlueSkyUser
-from social_media_api.models.subreddit_model import Subreddit
-from social_media_api.models.reddit_user_model import RedditUser
-from social_media_api.models.reddit_post_model import RedditPost
-
-from social_media_api.utils.endpoints import Endpoints
+from utils.endpoints import Endpoints, encode_url
 
 
 PostT = TypeVar("PostT", BlueSkyPost, RedditPost)
@@ -40,18 +38,11 @@ class SocialMediaSdk(ABC, Generic[PostT, UserT]):
 
 
 class BlueSkySdk(SocialMediaSdk[BlueSkyPost, BlueSkyUser]):
-    config: Config
-    utils: Utils
     _client: Client
 
-    def __init__(self, config: Config, utils: Utils):
-        self.config = config
-        self.utils = utils
-
+    def __init__(self, config: Config):
         self._client = Client()
-        self._client.login(
-            self.config.envs.bluesky_username, self.config.envs.bluesky_secret
-        )
+        self._client.login(config.envs.bluesky_username, config.envs.bluesky_secret)
 
     def search_posts(self, query: str) -> List[BlueSkyPost]:
         response = self._client.app.bsky.feed.search_posts({"q": query})
@@ -64,8 +55,6 @@ class BlueSkySdk(SocialMediaSdk[BlueSkyPost, BlueSkyUser]):
 
 
 class RedditSdk(SocialMediaSdk[RedditPost, RedditUser]):
-    _endpoints: Endpoints
-
     _username: str
     _password: str
     _app_id: str
@@ -73,9 +62,7 @@ class RedditSdk(SocialMediaSdk[RedditPost, RedditUser]):
 
     _store_path: str
 
-    def __init__(self, config: Config, utils: Utils):
-        self._endpoints = utils.endpoints
-
+    def __init__(self, config: Config):
         self._username = config.envs.username
         self._password = config.envs.password
         self._app_id = config.envs.app_id
@@ -113,7 +100,7 @@ class RedditSdk(SocialMediaSdk[RedditPost, RedditUser]):
         headers = {"User-Agent": f"ChangeMeClient/0.1 by {self._username}"}
 
         response = requests.post(
-            self._endpoints.access_token,
+            Endpoints.access_token.value,
             auth=client_auth,
             data=post_data,
             headers=headers,
@@ -133,7 +120,7 @@ class RedditSdk(SocialMediaSdk[RedditPost, RedditUser]):
         """Execute request, return list of objects"""
 
         if query_params is not None:
-            url = self._endpoints.encode_url(url, query_params)
+            url = encode_url(url, query_params)
 
         response = requests.get(url, headers=self._default_headers)
 
@@ -146,7 +133,7 @@ class RedditSdk(SocialMediaSdk[RedditPost, RedditUser]):
         return response.json()
 
     def search_posts(self, query: str) -> List[RedditPost]:
-        url = self._endpoints.search
+        url = Endpoints.search.value
 
         params: Dict[str, Any] = {
             "q": query,
@@ -159,7 +146,7 @@ class RedditSdk(SocialMediaSdk[RedditPost, RedditUser]):
         return [RedditPost.instatiate(child) for child in children]
 
     def get_user_details(self, user_id: str) -> RedditUser:
-        url = self._endpoints.user_about.format(username=user_id)
+        url = Endpoints.user_about.value.format(username=user_id)
         response_json = self._api_call(url)
 
         return RedditUser.instantiate(response_json)

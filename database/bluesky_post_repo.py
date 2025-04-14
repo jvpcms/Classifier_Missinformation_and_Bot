@@ -1,6 +1,6 @@
 from pymongo.synchronous.collection import Collection
 from pymongo.synchronous.database import Database
-from social_media_api.models.bluesky_post_model import BlueSkyPost
+from models.bluesky_post_model import BlueSkyPost
 
 
 class BlueSkyPostRepo:

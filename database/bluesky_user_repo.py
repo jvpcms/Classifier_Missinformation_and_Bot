@@ -1,6 +1,6 @@
 from pymongo.synchronous.collection import Collection
 from pymongo.synchronous.database import Database
-from social_media_api.models.bluesky_user_model import BlueSkyUser
+from models.bluesky_user_model import BlueSkyUser
 
 
 class BlueSkyUserRepo:

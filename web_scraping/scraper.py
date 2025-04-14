@@ -1,13 +1,13 @@
 from abc import ABC, abstractmethod
 import json
-from typing import Union, Callable
+from typing import Callable
 from feedparser import FeedParserDict, parse
 from newspaper import Article
 from newspaper.article import requests
 from newspaper.utils import BeautifulSoup
 
-from web_scraping.models.factory import NewsSource
-from web_scraping.models.labeled_news import LabeledNews
+from models.news_sources import NewsSource
+from models.labeled_news import LabeledNews
 from custom_logging import logger
 
 

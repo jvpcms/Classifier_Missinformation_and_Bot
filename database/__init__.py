@@ -1,3 +1,3 @@
-from database.repos.factory import get_repos
+from database.factory import get_repos
 
 repos = get_repos()

@@ -1,6 +1,6 @@
 from pymongo.synchronous.collection import Collection
 from pymongo.synchronous.database import Database
-from web_scraping.models.labeled_news import LabeledNews
+from models.labeled_news import LabeledNews
 
 
 class LabeledNewsRepo:
