@@ -7,7 +7,7 @@ class RedditUserRepo:
     collection: Collection
 
     def __init__(self, db: Database):
-        self.collection = db.users
+        self.collection = db.reddit_users
         self.collection.create_index(
             "name", unique=True
         )  # use the acctual reddit name as pk

@@ -7,7 +7,7 @@ class RedditPostRepo:
     collection: Collection
 
     def __init__(self, db: Database):
-        self.collection = db.posts
+        self.collection = db.reddit_posts
         self.collection.create_index(
             "name", unique=True
         )  # use the acctual reddit name as pk
