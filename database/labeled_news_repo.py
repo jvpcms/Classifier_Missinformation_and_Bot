@@ -13,3 +13,6 @@ class LabeledNewsRepo:
         self.collection.insert_one(news.to_dict())
 
         return news
+
+    def select_all(self) -> list[LabeledNews]:
+        return [LabeledNews.from_dict(news) for news in self.collection.find()]

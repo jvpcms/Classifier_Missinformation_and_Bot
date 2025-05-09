@@ -9,7 +9,7 @@ from database.subreddit_repo import SubredditRepo
 from database.reddit_user_repo import RedditUserRepo
 
 
-class ReposFactory:
+class ReposCollection:
     subreddits: SubredditRepo
     reddit_users: RedditUserRepo
     reddit_posts: RedditPostRepo
@@ -33,7 +33,7 @@ class ReposFactory:
         self.news_sources = NewsSourcesRepo(database)
 
 
-def get_repos():
+def get_repos_collection():
     config = get_config()
 
-    return ReposFactory(config)
+    return ReposCollection(config)
