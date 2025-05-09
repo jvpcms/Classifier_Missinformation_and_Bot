@@ -1,19 +1,30 @@
 import os
 import dotenv
+from typing import Optional
 
 
 class EnvConfig:
     def __init__(self) -> None:
         pass
 
-    def _get_env(self, env_name: str) -> str:
+    def _get_env(self, env_name: str, default: Optional[str] = None) -> str:
         dotenv.load_dotenv()
         env_var = os.getenv(env_name)
 
         if env_var is None:
-            raise Exception(f"Envioriment variable {env_name} not set.")
+            if default is not None:
+                return default
+            else:
+                raise Exception(f"Envioriment variable {env_name} not set.")
 
         return env_var
+
+    @property
+    def logging_level(self) -> int:
+        env_name = "LOGGING_LEVEL"
+        env_var = self._get_env(env_name, "1")
+
+        return int(env_var)
 
     @property
     def mongo_username(self) -> str:
