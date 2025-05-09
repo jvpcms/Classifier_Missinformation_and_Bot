@@ -8,7 +8,7 @@ class BlueSkyPostRepo:
 
     def __init__(self, db: Database):
         self.collection = db.bluesky_posts
-        self.collection.create_index("uri", unique=True)
+        self.collection.create_index("uri", unique=True, name="uri_index")
 
     def insert(self, post: BlueSkyPost) -> BlueSkyPost:
         self.collection.insert_one(post.to_dict())

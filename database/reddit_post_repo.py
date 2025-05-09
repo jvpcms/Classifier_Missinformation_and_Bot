@@ -8,9 +8,7 @@ class RedditPostRepo:
 
     def __init__(self, db: Database):
         self.collection = db.reddit_posts
-        self.collection.create_index(
-            "name", unique=True
-        )  # use the acctual reddit name as pk
+        self.collection.create_index("name", unique=True, name="name_index")
 
     def insert(self, post: RedditPost) -> RedditPost:
         self.collection.insert_one(post.to_dict())

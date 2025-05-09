@@ -8,9 +8,7 @@ class SubredditRepo:
 
     def __init__(self, db: Database):
         self.collection = db.subreddits
-        self.collection.create_index(
-            "name", unique=True
-        )  # use the acctual reddit name as pk
+        self.collection.create_index("name", unique=True)
 
     def insert(self, subreddit: Subreddit) -> Subreddit:
         self.collection.insert_one(subreddit.to_dict())

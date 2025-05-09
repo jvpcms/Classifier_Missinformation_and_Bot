@@ -3,7 +3,7 @@ from config.envconfig import Config, get_config
 from database.bluesky_post_repo import BlueSkyPostRepo
 from database.bluesky_user_repo import BlueSkyUserRepo
 from database.labeled_news_repo import LabeledNewsRepo
-from database.news_sources import NewsSourcesRepo
+from database.news_sources_repo import NewsSourcesRepo
 from database.reddit_post_repo import RedditPostRepo
 from database.subreddit_repo import SubredditRepo
 from database.reddit_user_repo import RedditUserRepo

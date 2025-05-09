@@ -8,7 +8,7 @@ class BlueSkyUserRepo:
 
     def __init__(self, db: Database):
         self.collection = db.bluesky_users
-        self.collection.create_index("did", unique=True)
+        self.collection.create_index("did", unique=True, name="did_index")
 
     def insert(self, user: BlueSkyUser) -> BlueSkyUser:
         self.collection.insert_one(user.to_dict())
