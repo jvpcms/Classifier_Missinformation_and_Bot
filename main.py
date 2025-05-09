@@ -1,46 +1,42 @@
-from pymongo import errors as pymongo_errors
+from custom_logging.custom_logger import get_logger
+from data_collector import data_collector_insntance
 from datetime import datetime, timedelta
 
-from web_scraping import scrapers_repo
+from models.labeled_news import LabeledNews
 
-from web_scraping.models.labeled_news import LabeledNews
-from web_scraping.scrapers.scraper import Scraper
-
-# from database import repos
-
-# labeled_news_repo = repos.labeled_news
-# news_sources_repo = repos.news_sources
+custom_logger = get_logger("main")
 
 DATE_LIMIT = datetime.now() - timedelta(days=7)
 
 
-def filter_function(labeled_news: LabeledNews) -> bool:
+def labeled_news_filer_function(labeled_news: LabeledNews) -> bool:
     """Filter labeled news by date"""
 
-    return (labeled_news.date_published is not None) and (
-        labeled_news.date_published > DATE_LIMIT
-    )
+    # date_limit = datetime.now() - timedelta(days=7)
+    #
+    # return (labeled_news.date_published is not None) and (
+    #     labeled_news.date_published > date_limit
+    # )
+    return True
 
 
 def main():
-    scrapers_repo.aos_fatos_scraper.collect_labeled_feed_entries(lambda x: True)
-    # scrapers: list[Scraper] = [
-    #     scrapers_repo.aos_fatos_scraper,
-    #     scrapers_repo.g1_scraper,
-    #     scrapers_repo.e_farsas_scraper,
-    #     scrapers_repo.boatos_scraper,
-    #     scrapers_repo.g1_edu_scraper,
-    #     scrapers_repo.g1_economia_scraper,
-    #     scrapers_repo.g1_tech_scraper,
-    # ]
-    #
-    # labeled_news: list[LabeledNews] = []
-    #
-    # for scraper in scrapers:
-    #     try:
-    #         news_sources_repo.insert(scraper.news_source)
-    #     except pymongo_errors.DuplicateKeyError:
-    #         pass
+    """Main function to run the data collector."""
+
+    data_collector_insntance.store_news_sources()
+
+    collected_labaled_news = (
+        data_collector_insntance.collect_labeled_news_from_all_sources(
+            labeled_news_filer_function
+        )
+    )
+
+    custom_logger.debug(f"#collected news: {len(collected_labaled_news)}")
+
+    for news in collected_labaled_news:
+
+        custom_logger.debug(f"news: {news.title}")
+        data_collector_insntance.store_labeled_news(news)
 
 
 if __name__ == "__main__":

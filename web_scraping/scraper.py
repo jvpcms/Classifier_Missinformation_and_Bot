@@ -118,7 +118,7 @@ class AosFatosScraper(Scraper):
                 {
                     **entry,
                     "label": label,
-                    "url_source": self.news_source.base_url,
+                    "source_url": self.news_source.base_url,
                     "description": description,
                     "claim_review": claim_reviewed,
                     "review_body": review_body,
@@ -168,7 +168,7 @@ class G1Scraper(Scraper):
             {
                 **entry,
                 "label": label,
-                "url_source": self.news_source.base_url,
+                "source_url": self.news_source.base_url,
                 "description": description,
             }
         )
@@ -262,7 +262,7 @@ class EFarsasScraper(Scraper):
                 {
                     **entry,
                     "label": label,
-                    "url_source": self.news_source.base_url,
+                    "source_url": self.news_source.base_url,
                     "description": description,
                     "claim_review": claim_reviewed,
                     "review_body": review_body,
@@ -319,7 +319,7 @@ class BoatosScraper(Scraper):
             {
                 **entry,
                 "label": label,
-                "url_source": self.news_source.base_url,
+                "source_url": self.news_source.base_url,
                 "description": description,
             }
         )
@@ -348,7 +348,7 @@ class G1TechScraper(Scraper):
             {
                 **entry,
                 "label": True,
-                "url_source": self.news_source.base_url,
+                "source_url": self.news_source.base_url,
                 "description": description,
             }
         )
@@ -377,7 +377,7 @@ class G1EduScraper(Scraper):
             {
                 **entry,
                 "label": True,
-                "url_source": self.news_source.base_url,
+                "source_url": self.news_source.base_url,
                 "description": description,
             }
         )
@@ -406,7 +406,7 @@ class G1EconomiaScraper(Scraper):
             {
                 **entry,
                 "label": True,
-                "url_source": self.news_source.base_url,
+                "source_url": self.news_source.base_url,
                 "description": description,
             }
         )

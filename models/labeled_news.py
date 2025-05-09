@@ -20,7 +20,7 @@ portuguese_stopwords = set(nltk_stopwords.words(config.envs.language))
 
 @dataclass
 class LabeledNews:
-    url: str
+    link: str
     source_url: str
     title: str | None
     description: str | None
@@ -35,8 +35,8 @@ class LabeledNews:
     @staticmethod
     def from_dict(d: dict) -> "LabeledNews":
         return LabeledNews(
-            url=d["link"],
-            source_url=d["url_source"],
+            link=d["link"],
+            source_url=d["source_url"],
             title=d.get("title", None),
             description=d.get("description", None),
             claim_review=d.get("claim_review", None),
@@ -52,7 +52,7 @@ class LabeledNews:
 
     def to_dict(self) -> dict:
         return {
-            "url": self.url,
+            "link": self.link,
             "source_url": self.source_url,
             "title": self.title,
             "description": self.description,
