@@ -2,7 +2,9 @@ import re
 import json
 from xml.sax import saxutils
 
-from custom_logging import logger
+from custom_logging.custom_logger import get_logger
+
+logger = get_logger("dictionaries.py")
 
 # import demjson3
 # raw_json = '{"key": "string with "internal" quotes"}'

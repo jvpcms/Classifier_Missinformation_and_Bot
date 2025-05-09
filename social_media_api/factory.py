@@ -12,7 +12,7 @@ from models.reddit_post_model import RedditPost
 from models.reddit_user_model import RedditUser
 
 
-class Socialmediasdkcollection:
+class SocialMediaSdkCollection:
     reddit_sdk: SocialMediaSdk[RedditPost, RedditUser]
     bluesky_sdk: SocialMediaSdk[BlueSkyPost, BlueSkyUser]
 
@@ -24,4 +24,4 @@ class Socialmediasdkcollection:
 def get_social_media_sdk_colleciton():
     config = get_config()
 
-    return Socialmediasdkcollection(config)
+    return SocialMediaSdkCollection(config)

@@ -6,13 +6,14 @@ from newspaper import Article
 from newspaper.article import requests
 from newspaper.utils import BeautifulSoup
 
+from custom_logging.custom_logger import CustomLogger
 from models.news_sources import NewsSource
 from models.labeled_news import LabeledNews
-from custom_logging import logger
 
 
 class Scraper(ABC):
     news_source: NewsSource
+    custom_logger: CustomLogger
 
     def __init__(self):
         raise NotImplementedError("This class is not meant to be instantiated")
@@ -23,7 +24,7 @@ class Scraper(ABC):
         try:
             feed = parse(self.news_source.feed_url)
         except Exception as e:
-            logger.error(f"Error while parsing feed: {e}")
+            self.custom_logger.error(f"Error while parsing feed: {e}")
             return []
 
         return feed.entries
@@ -66,8 +67,9 @@ class Scraper(ABC):
 
 
 class AosFatosScraper(Scraper):
-    def __init__(self, news_source: NewsSource):
+    def __init__(self, news_source: NewsSource, custom_logger: CustomLogger):
         self.news_source = news_source
+        self.custom_logger = custom_logger
 
     def label_feed_entry(self, entry: dict) -> LabeledNews | None:
         """Label feed entry as true or false"""
@@ -75,7 +77,9 @@ class AosFatosScraper(Scraper):
             response = requests.get(entry["link"])
             content = BeautifulSoup(response.content, "html.parser")
 
-            description = content.find_all("meta", attrs={"name": "description"})
+            description = content.find_all(
+                "meta", attrs={"name": "description"}
+            )
             if len(description) > 0:
                 description = description[0].get("content")
             else:
@@ -89,7 +93,9 @@ class AosFatosScraper(Scraper):
                 None,
             )
 
-            for ld in content.find_all("script", attrs={"type": "application/ld+json"}):
+            for ld in content.find_all(
+                "script", attrs={"type": "application/ld+json"}
+            ):
                 try:
                     data = json.loads(ld.get_text(strip=True))
                     claim_reviewed = claim_reviewed or data.get("claimReviewed")
@@ -97,8 +103,12 @@ class AosFatosScraper(Scraper):
 
                     if "reviewRating" in data:
                         review_rating = data["reviewRating"]
-                        best_rating = best_rating or review_rating.get("bestRating")
-                        rating_value = rating_value or review_rating.get("ratingValue")
+                        best_rating = best_rating or review_rating.get(
+                            "bestRating"
+                        )
+                        rating_value = rating_value or review_rating.get(
+                            "ratingValue"
+                        )
                         if review_rating.get("alternateName") == "falso":
                             label = False
                 except json.JSONDecodeError:
@@ -118,16 +128,17 @@ class AosFatosScraper(Scraper):
             )
 
         except requests.RequestException as e:
-            logger.error(f"Network error in label_feed_entry: {e}")
+            self.custom_logger.error(f"Network error in label_feed_entry: {e}")
         except Exception as e:
-            logger.error(f"Error in label_feed_entry: {e}")
+            self.custom_logger.error(f"Error in label_feed_entry: {e}")
 
         return None
 
 
 class G1Scraper(Scraper):
-    def __init__(self, news_source: NewsSource):
+    def __init__(self, news_source: NewsSource, custom_logger: CustomLogger):
         self.news_source = news_source
+        self.custom_logger = custom_logger
 
     def label_feed_entry(self, entry: dict) -> LabeledNews | None:
         """Label feed entry as true or false"""
@@ -135,14 +146,20 @@ class G1Scraper(Scraper):
         response = requests.get(entry["link"])
         content = BeautifulSoup(response.content, "html.parser")
 
-        meta_description = content.find_all("meta", attrs={"name": "description"})
+        meta_description = content.find_all(
+            "meta", attrs={"name": "description"}
+        )
 
         description = None
         if len(meta_description) > 0:
             description = meta_description[0].get("content")
 
         label = None
-        if "#NÃO É BEM ASSIM" in entry["title"] or "#FAKE" in entry["title"]:
+
+        if any(
+            keyword in entry["title"]
+            for keyword in ["#NÃO É BEM ASSIM", "#FAKE", "#É FAKE"]
+        ):
             label = False
         elif "#FATO" in entry["title"]:
             label = True
@@ -158,8 +175,9 @@ class G1Scraper(Scraper):
 
 
 class EFarsasScraper(Scraper):
-    def __init__(self, news_source: NewsSource):
+    def __init__(self, news_source: NewsSource, custom_logger: CustomLogger):
         self.news_source = news_source
+        self.custom_logger = custom_logger
 
     def collect_labeled_feed_entries(
         self, filter: Callable[[LabeledNews], bool]
@@ -175,14 +193,14 @@ class EFarsasScraper(Scraper):
         feed_labeled_news: list[LabeledNews] = []
 
         for entry in fake_entries:
-            labeled_news = self.label_feed_entry(entry)
+            labeled_news = self.retrieve_extra_data(entry)
 
             if labeled_news is not None and filter(labeled_news):
                 labeled_news.label = False
                 feed_labeled_news.append(labeled_news)
 
         for entry in true_entries:
-            labeled_news = self.label_feed_entry(entry)
+            labeled_news = self.retrieve_extra_data(entry)
 
             if labeled_news is not None and filter(labeled_news):
                 labeled_news.label = True
@@ -190,13 +208,15 @@ class EFarsasScraper(Scraper):
 
         return feed_labeled_news
 
-    def label_feed_entry(self, entry: dict) -> LabeledNews | None:
-        """Label feed entry as true or false"""
+    def retrieve_extra_data(self, entry: dict) -> LabeledNews | None:
+        """Add claim review, review body, best rating and rating value to the entry"""
         try:
             response = requests.get(entry["link"])
             content = BeautifulSoup(response.content, "html.parser")
 
-            description = content.find_all("meta", attrs={"name": "description"})
+            description = content.find_all(
+                "meta", attrs={"name": "description"}
+            )
             if len(description) > 0:
                 description = description[0].get("content")
             else:
@@ -210,7 +230,9 @@ class EFarsasScraper(Scraper):
                 None,
             )
 
-            for ld in content.find_all("script", attrs={"type": "application/ld+json"}):
+            for ld in content.find_all(
+                "script", attrs={"type": "application/ld+json"}
+            ):
                 try:
                     data = json.loads(ld.get_text(strip=True))
 
@@ -218,12 +240,16 @@ class EFarsasScraper(Scraper):
                         data = [data]
 
                     for d in data:
-                        claim_reviewed = claim_reviewed or d.get("claimReviewed")
+                        claim_reviewed = claim_reviewed or d.get(
+                            "claimReviewed"
+                        )
                         review_body = review_body or d.get("reviewBody")
 
                         if "reviewRating" in d:
                             review_rating = d["reviewRating"]
-                            best_rating = best_rating or review_rating.get("bestRating")
+                            best_rating = best_rating or review_rating.get(
+                                "bestRating"
+                            )
                             rating_value = rating_value or review_rating.get(
                                 "ratingValue"
                             )
@@ -246,39 +272,48 @@ class EFarsasScraper(Scraper):
             )
 
         except requests.RequestException as e:
-            logger.error(f"Network error in label_feed_entry: {e}")
+            self.custom_logger.error(f"Network error in label_feed_entry: {e}")
         except Exception as e:
-            logger.error(f"Error in label_feed_entry: {e}")
+            self.custom_logger.error(f"Error in label_feed_entry: {e}")
 
+        return None
+
+    def label_feed_entry(self, entry: dict) -> LabeledNews | None:
         return None
 
 
 class BoatosScraper(Scraper):
-    # TODO: language detection
-    def __init__(self, news_source: NewsSource):
+    def __init__(self, news_source: NewsSource, custom_logger: CustomLogger):
         self.news_source = news_source
+        self.custom_logger = custom_logger
 
     def label_feed_entry(self, entry: dict) -> LabeledNews | None:
         """Label feed entry as true or false"""
 
+        if str(entry["link"]).startswith(
+            "https://www.boatos.org/english/"
+        ) or str(entry["link"]).startswith("https://www.boatos.org/espanol/"):
+            return None
+
         response = requests.get(entry["link"])
         content = BeautifulSoup(response.content, "html.parser")
 
-        meta_description = content.find_all("meta", attrs={"name": "description"})
+        meta_description = content.find_all(
+            "meta", attrs={"name": "description"}
+        )
         if len(meta_description) > 0:
             description = meta_description[0].get("content")
         else:
             description = None
 
         p_tags = content.find_all("p")
-        p_tags_content = [p.get_text() for p in p_tags]
 
-        try:
-            p_tags_content.index("Fake news ❌")
-            p_tags_content.index("Golpe ⚠️")
-            label = False
-        except ValueError:
-            label = None
+        label = None
+
+        for tag in p_tags:
+            if tag.get_text() in ["Fake news ❌", "Golpe ⚠️"]:
+                label = False
+                break
 
         return LabeledNews.from_dict(
             {
@@ -291,8 +326,9 @@ class BoatosScraper(Scraper):
 
 
 class G1TechScraper(Scraper):
-    def __init__(self, news_source: NewsSource):
+    def __init__(self, news_source: NewsSource, custom_logger: CustomLogger):
         self.news_source = news_source
+        self.custom_logger = custom_logger
 
     def label_feed_entry(self, entry: dict) -> LabeledNews | None:
         """Label feed entry as true or false"""
@@ -300,7 +336,9 @@ class G1TechScraper(Scraper):
         response = requests.get(entry["link"])
         content = BeautifulSoup(response.content, "html.parser")
 
-        meta_description = content.find_all("meta", attrs={"name": "description"})
+        meta_description = content.find_all(
+            "meta", attrs={"name": "description"}
+        )
         if len(meta_description) > 0:
             description = meta_description[0].get("content")
         else:
@@ -317,8 +355,9 @@ class G1TechScraper(Scraper):
 
 
 class G1EduScraper(Scraper):
-    def __init__(self, news_source: NewsSource):
+    def __init__(self, news_source: NewsSource, custom_logger: CustomLogger):
         self.news_source = news_source
+        self.custom_logger = custom_logger
 
     def label_feed_entry(self, entry: dict) -> LabeledNews | None:
         """Label feed entry as true or false"""
@@ -326,7 +365,9 @@ class G1EduScraper(Scraper):
         response = requests.get(entry["link"])
         content = BeautifulSoup(response.content, "html.parser")
 
-        meta_description = content.find_all("meta", attrs={"name": "description"})
+        meta_description = content.find_all(
+            "meta", attrs={"name": "description"}
+        )
         if len(meta_description) > 0:
             description = meta_description[0].get("content")
         else:
@@ -343,8 +384,9 @@ class G1EduScraper(Scraper):
 
 
 class G1EconomiaScraper(Scraper):
-    def __init__(self, news_source: NewsSource):
+    def __init__(self, news_source: NewsSource, custom_logger: CustomLogger):
         self.news_source = news_source
+        self.custom_logger = custom_logger
 
     def label_feed_entry(self, entry: dict) -> LabeledNews | None:
         """Label feed entry as true or false"""
@@ -352,7 +394,9 @@ class G1EconomiaScraper(Scraper):
         response = requests.get(entry["link"])
         content = BeautifulSoup(response.content, "html.parser")
 
-        meta_description = content.find_all("meta", attrs={"name": "description"})
+        meta_description = content.find_all(
+            "meta", attrs={"name": "description"}
+        )
         if len(meta_description) > 0:
             description = meta_description[0].get("content")
         else:
