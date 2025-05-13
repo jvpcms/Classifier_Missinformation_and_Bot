@@ -1,21 +1,9 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from config.envconfig import get_config
-
-from functools import partial
-from nltk.data import path as nltk_path
-from nltk.tokenize import word_tokenize as nltk_word_tokenize
-from nltk.corpus import stopwords as nltk_stopwords
-
 from utils.time import time_struct_to_datetime
 
-config = get_config()
-nltk_path.append(config.envs.nltk_data_path)
-portuguese_word_tokenize = partial(
-    nltk_word_tokenize, language=config.envs.language
-)
-portuguese_stopwords = set(nltk_stopwords.words(config.envs.language))
+from utils.search_queries import get_custom_stopwords, portuguese_word_tokenize
 
 
 @dataclass
@@ -44,9 +32,7 @@ class LabeledNews:
             best_rating=d.get("best_rating", None),
             rating_value=d.get("rating_value", None),
             label=d.get("label", None),
-            date_published=time_struct_to_datetime(
-                d.get("published_parsed", None)
-            ),
+            date_published=time_struct_to_datetime(d.get("published_parsed", None)),
             date_added=datetime.now(),
         )
 
@@ -67,8 +53,11 @@ class LabeledNews:
             ),
         }
 
-    def get_search_query(self) -> list[str]:
+    def get_search_query(self) -> str:
         if self.description is None:
-            return []
+            return ""
 
-        return portuguese_word_tokenize(self.description)
+        query = portuguese_word_tokenize(self.description)
+        custom_stopwords = get_custom_stopwords()
+
+        return " ".join(list(filter(lambda x: x not in custom_stopwords, query)))

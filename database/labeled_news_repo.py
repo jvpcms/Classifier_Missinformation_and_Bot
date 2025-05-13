@@ -1,3 +1,4 @@
+from typing import Dict, List
 from pymongo.synchronous.collection import Collection
 from pymongo.synchronous.database import Database
 from models.labeled_news import LabeledNews
@@ -17,7 +18,9 @@ class LabeledNewsRepo:
 
         return news
 
-    def find_all(self) -> list[LabeledNews]:
-        """Find all LabeledNews documents in the collection"""
+    def find(self, where_clause: Dict = {}) -> List[LabeledNews]:
+        """Find a LabeledNews document in the collection by a specific field"""
 
-        return [LabeledNews.from_dict(news) for news in self.collection.find()]
+        return [
+            LabeledNews.from_dict(news) for news in self.collection.find(where_clause)
+        ]
