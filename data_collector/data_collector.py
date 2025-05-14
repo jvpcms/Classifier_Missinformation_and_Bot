@@ -68,16 +68,13 @@ class DataCollector:
 
             self.custom_logger.debug(f"Scraping {scraper.__class__}")
             try:
-                labeled_news = scraper.collect_labeled_feed_entries(
-                    lambda x: filter_function(x) and x.label is not None
-                )
+                labeled_news = scraper.collect_labeled_feed_entries(filter_function)
+                labeled_news = list(filter(lambda x: x.label is not None, labeled_news))
 
                 collected_labeled_news = collected_labeled_news + labeled_news
 
             except Exception as e:
-                self.custom_logger.error(
-                    f"Error scraping {scraper.__class__}: {e}"
-                )
+                self.custom_logger.error(f"Error scraping {scraper.__class__}: {e}")
 
         return collected_labeled_news
 
@@ -93,9 +90,7 @@ class DataCollector:
             )
 
         except Exception as e:
-            self.custom_logger.error(
-                f"Error storing news {labeled_news.link}: {e}"
-            )
+            self.custom_logger.error(f"Error storing news {labeled_news.link}: {e}")
 
     def associate_labeled_news_with_bluesky_posts(
         self, labeled_news: LabeledNews
@@ -105,9 +100,7 @@ class DataCollector:
         query = labeled_news.get_search_query()
         query_str = " ".join(query)
 
-        return self.social_media_sdk_colleciton.bluesky_sdk.search_posts(
-            query_str
-        )
+        return self.social_media_sdk_colleciton.bluesky_sdk.search_posts(query_str)
 
     def store_bluesky_post(self, bluesky_post: BlueSkyPost) -> None:
         """Store bluesky post in database"""
@@ -115,25 +108,19 @@ class DataCollector:
         try:
             self.repos_collection.bluesky_posts.insert(bluesky_post)
         except pymongo_errors.DuplicateKeyError:
-            self.custom_logger.debug(
-                f"Duplicate key error for {bluesky_post.uri}"
-            )
+            self.custom_logger.debug(f"Duplicate key error for {bluesky_post.uri}")
 
         except Exception as e:
             self.custom_logger.error(
                 f"Error storing bluesky post {bluesky_post.uri}: {e}"
             )
 
-    def collect_bluesky_acconunt_info(
-        self, bluesky_post: BlueSkyPost
-    ) -> BlueSkyUser:
+    def collect_bluesky_acconunt_info(self, bluesky_post: BlueSkyPost) -> BlueSkyUser:
         """Retrieve poster account from bluesky post"""
 
         user_id = bluesky_post.user_did
 
-        return self.social_media_sdk_colleciton.bluesky_sdk.get_user_details(
-            user_id
-        )
+        return self.social_media_sdk_colleciton.bluesky_sdk.get_user_details(user_id)
 
     def store_bluesky_user(self, bluesky_user: BlueSkyUser) -> None:
         """Store bluesky post in database"""
@@ -141,9 +128,7 @@ class DataCollector:
         try:
             self.repos_collection.bluesky_users.insert(bluesky_user)
         except pymongo_errors.DuplicateKeyError:
-            self.custom_logger.debug(
-                f"Duplicate key error for {bluesky_user.did}"
-            )
+            self.custom_logger.debug(f"Duplicate key error for {bluesky_user.did}")
 
         except Exception as e:
             self.custom_logger.error(

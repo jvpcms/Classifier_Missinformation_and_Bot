@@ -77,9 +77,7 @@ class AosFatosScraper(Scraper):
             response = requests.get(entry["link"])
             content = BeautifulSoup(response.content, "html.parser")
 
-            description = content.find_all(
-                "meta", attrs={"name": "description"}
-            )
+            description = content.find_all("meta", attrs={"name": "description"})
             if len(description) > 0:
                 description = description[0].get("content")
             else:
@@ -93,9 +91,7 @@ class AosFatosScraper(Scraper):
                 None,
             )
 
-            for ld in content.find_all(
-                "script", attrs={"type": "application/ld+json"}
-            ):
+            for ld in content.find_all("script", attrs={"type": "application/ld+json"}):
                 try:
                     data = json.loads(ld.get_text(strip=True))
                     claim_reviewed = claim_reviewed or data.get("claimReviewed")
@@ -103,12 +99,8 @@ class AosFatosScraper(Scraper):
 
                     if "reviewRating" in data:
                         review_rating = data["reviewRating"]
-                        best_rating = best_rating or review_rating.get(
-                            "bestRating"
-                        )
-                        rating_value = rating_value or review_rating.get(
-                            "ratingValue"
-                        )
+                        best_rating = best_rating or review_rating.get("bestRating")
+                        rating_value = rating_value or review_rating.get("ratingValue")
                         if review_rating.get("alternateName") == "falso":
                             label = False
                 except json.JSONDecodeError:
@@ -146,9 +138,7 @@ class G1Scraper(Scraper):
         response = requests.get(entry["link"])
         content = BeautifulSoup(response.content, "html.parser")
 
-        meta_description = content.find_all(
-            "meta", attrs={"name": "description"}
-        )
+        meta_description = content.find_all("meta", attrs={"name": "description"})
 
         description = None
         if len(meta_description) > 0:
@@ -214,9 +204,7 @@ class EFarsasScraper(Scraper):
             response = requests.get(entry["link"])
             content = BeautifulSoup(response.content, "html.parser")
 
-            description = content.find_all(
-                "meta", attrs={"name": "description"}
-            )
+            description = content.find_all("meta", attrs={"name": "description"})
             if len(description) > 0:
                 description = description[0].get("content")
             else:
@@ -230,9 +218,7 @@ class EFarsasScraper(Scraper):
                 None,
             )
 
-            for ld in content.find_all(
-                "script", attrs={"type": "application/ld+json"}
-            ):
+            for ld in content.find_all("script", attrs={"type": "application/ld+json"}):
                 try:
                     data = json.loads(ld.get_text(strip=True))
 
@@ -240,22 +226,19 @@ class EFarsasScraper(Scraper):
                         data = [data]
 
                     for d in data:
-                        claim_reviewed = claim_reviewed or d.get(
-                            "claimReviewed"
-                        )
+                        claim_reviewed = claim_reviewed or d.get("claimReviewed")
                         review_body = review_body or d.get("reviewBody")
 
                         if "reviewRating" in d:
                             review_rating = d["reviewRating"]
-                            best_rating = best_rating or review_rating.get(
-                                "bestRating"
-                            )
+                            best_rating = best_rating or review_rating.get("bestRating")
                             rating_value = rating_value or review_rating.get(
                                 "ratingValue"
                             )
                             if review_rating.get("alternateName") == "falso":
                                 label = False
                 except json.JSONDecodeError:
+                    print("json.JSONDecodeError")
                     continue
 
             return LabeledNews.from_dict(
@@ -272,9 +255,9 @@ class EFarsasScraper(Scraper):
             )
 
         except requests.RequestException as e:
-            self.custom_logger.error(f"Network error in label_feed_entry: {e}")
+            self.custom_logger.error(f"Network error in retrieve_extra_data: {e}")
         except Exception as e:
-            self.custom_logger.error(f"Error in label_feed_entry: {e}")
+            self.custom_logger.error(f"Error in retrieve_extra_data: {e}")
 
         return None
 
@@ -290,17 +273,15 @@ class BoatosScraper(Scraper):
     def label_feed_entry(self, entry: dict) -> LabeledNews | None:
         """Label feed entry as true or false"""
 
-        if str(entry["link"]).startswith(
-            "https://www.boatos.org/english/"
-        ) or str(entry["link"]).startswith("https://www.boatos.org/espanol/"):
+        if str(entry["link"]).startswith("https://www.boatos.org/english/") or str(
+            entry["link"]
+        ).startswith("https://www.boatos.org/espanol/"):
             return None
 
         response = requests.get(entry["link"])
         content = BeautifulSoup(response.content, "html.parser")
 
-        meta_description = content.find_all(
-            "meta", attrs={"name": "description"}
-        )
+        meta_description = content.find_all("meta", attrs={"name": "description"})
         if len(meta_description) > 0:
             description = meta_description[0].get("content")
         else:
@@ -336,9 +317,7 @@ class G1TechScraper(Scraper):
         response = requests.get(entry["link"])
         content = BeautifulSoup(response.content, "html.parser")
 
-        meta_description = content.find_all(
-            "meta", attrs={"name": "description"}
-        )
+        meta_description = content.find_all("meta", attrs={"name": "description"})
         if len(meta_description) > 0:
             description = meta_description[0].get("content")
         else:
@@ -365,9 +344,7 @@ class G1EduScraper(Scraper):
         response = requests.get(entry["link"])
         content = BeautifulSoup(response.content, "html.parser")
 
-        meta_description = content.find_all(
-            "meta", attrs={"name": "description"}
-        )
+        meta_description = content.find_all("meta", attrs={"name": "description"})
         if len(meta_description) > 0:
             description = meta_description[0].get("content")
         else:
@@ -394,9 +371,7 @@ class G1EconomiaScraper(Scraper):
         response = requests.get(entry["link"])
         content = BeautifulSoup(response.content, "html.parser")
 
-        meta_description = content.find_all(
-            "meta", attrs={"name": "description"}
-        )
+        meta_description = content.find_all("meta", attrs={"name": "description"})
         if len(meta_description) > 0:
             description = meta_description[0].get("content")
         else:
