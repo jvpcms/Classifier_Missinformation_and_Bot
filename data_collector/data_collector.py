@@ -100,7 +100,14 @@ class DataCollector:
         query = labeled_news.get_search_query()
         query_str = " ".join(query)
 
-        return self.social_media_sdk_colleciton.bluesky_sdk.search_posts(query_str)
+        related_posts = self.social_media_sdk_colleciton.bluesky_sdk.search_posts(
+            query_str
+        )
+
+        for post in related_posts:
+            post.associate_with_labeled_news(labeled_news)
+
+        return related_posts
 
     def store_bluesky_post(self, bluesky_post: BlueSkyPost) -> None:
         """Store bluesky post in database"""

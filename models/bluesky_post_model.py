@@ -5,10 +5,13 @@ from dataclasses import dataclass
 from atproto_client.models.app.bsky.feed.defs import PostView
 from dateutil.tz import gettz
 
+from models.labeled_news import LabeledNews
+
 
 @dataclass
 class BlueSkyPost:
     date_added: datetime
+    news_link: Union[str, None]
     uri: str
     user_did: str
     datetime: datetime
@@ -24,6 +27,7 @@ class BlueSkyPost:
     def instantiate(post: PostView) -> "BlueSkyPost":
         return BlueSkyPost(
             date_added=datetime.now().astimezone(gettz("UTC")),
+            news_link=None,
             uri=post.uri,
             user_did=post.author.did,
             datetime=datetime.fromisoformat(post.indexed_at.replace("Z", "+00:00")),
@@ -38,9 +42,15 @@ class BlueSkyPost:
             ],
         )
 
+    def associate_with_labeled_news(self, labeled_news: LabeledNews) -> None:
+        """Associate this post with a labeled news item."""
+
+        self.news_link = labeled_news.link
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "date_added": self.date_added,
+            "news_link": self.news_link,
             "uri": self.uri,
             "datetime": self.datetime,
             "text": self.text,
