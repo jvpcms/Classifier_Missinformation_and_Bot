@@ -22,5 +22,6 @@ class LabeledNewsRepo:
         """Find a LabeledNews document in the collection by a specific field"""
 
         return [
-            LabeledNews.from_dict(news) for news in self.collection.find(where_clause)
+            LabeledNews.from_db_entry(news)
+            for news in self.collection.find(where_clause)
         ]
