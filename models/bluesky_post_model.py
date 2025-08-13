@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from atproto_client.models.app.bsky.feed.defs import PostView
 from dateutil.tz import gettz
 
+from models.bluesky_user_model import BlueSkyUser
 from models.labeled_news import LabeledNews
 
 
@@ -13,6 +14,7 @@ class BlueSkyPost:
     date_added: datetime
     news_link: Union[str, None]
     uri: str
+    link: Union[str, None]
     user_did: str
     datetime: datetime
     text: Union[str, None]
@@ -28,6 +30,7 @@ class BlueSkyPost:
         return BlueSkyPost(
             date_added=datetime.now().astimezone(gettz("UTC")),
             news_link=None,
+            link=None,
             uri=post.uri,
             user_did=post.author.did,
             datetime=datetime.fromisoformat(post.indexed_at.replace("Z", "+00:00")),
@@ -47,11 +50,17 @@ class BlueSkyPost:
 
         self.news_link = labeled_news.link
 
+    def associate_with_link(self, user: BlueSkyUser) -> None:
+        """Associate this post with a specific link."""
+        
+        self.link = f"https://bsky.app/profile/{user.handle}/post/{self.rkey}"
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "date_added": self.date_added,
             "news_link": self.news_link,
             "uri": self.uri,
+            "link": self.link,
             "datetime": self.datetime,
             "text": self.text,
             "like_count": self.like_count,
@@ -62,3 +71,8 @@ class BlueSkyPost:
             "langs": self.langs,
             "images": self.images,
         }
+
+    @property
+    def rkey(self) -> str:
+        """Return a unique key for this post."""
+        return self.uri.split("/")[-1]
