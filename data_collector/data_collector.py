@@ -109,10 +109,13 @@ class DataCollector:
         for post in related_posts:
             post.associate_with_labeled_news(labeled_news)
 
-            user = self.social_media_sdk_colleciton.bluesky_sdk.get_user_details(post.user_did)
-            post.associate_with_link(user)
-
         return related_posts
+
+    def retrieve_associated_user_from_bluesky_post(self, post: BlueSkyPost) -> BlueSkyUser:
+        return self.social_media_sdk_colleciton.bluesky_sdk.get_user_details(post.user_did)
+
+    def associte_bluesky_post_with_url(self, post: BlueSkyPost, user: BlueSkyUser):
+        post.associate_with_link(user)
 
     def store_bluesky_post(self, bluesky_post: BlueSkyPost) -> None:
         """Store bluesky post in database"""

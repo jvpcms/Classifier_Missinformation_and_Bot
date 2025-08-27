@@ -10,6 +10,12 @@ class BlueSkyUserRepo:
         self.collection = db.bluesky_users
         self.collection.create_index("did", unique=True, name="did_index")
 
+    def find(self) -> list[BlueSkyUser]:
+        return [
+            BlueSkyUser.from_db_entry(user)
+            for user in self.collection.find({})
+        ]
+
     def insert(self, user: BlueSkyUser) -> BlueSkyUser:
         self.collection.insert_one(user.to_dict())
 

@@ -38,13 +38,35 @@ class BlueSkyUser:
 
     def to_dict(self) -> Dict[str, Any]:
         return {
-            "datea_added": self.date_added,
+            "datea_added": self.date_added.timestamp(),
             "did": self.did,
             "handle": self.handle,
             "about": self.about,
-            "datetime": self.datetime,
+            "datetime": (
+                self.datetime.timestamp() if self.datetime is not None else None
+            ),
             "display_name": self.display_name,
             "followers_count": self.followers_count,
             "follows_count": self.follows_count,
             "posts_count": self.posts_count,
         }
+
+    @staticmethod
+    def from_db_entry(entry: dict) -> "BlueSkyUser":
+        return BlueSkyUser(
+            date_added=datetime.fromtimestamp(entry["datea_added"]).astimezone(
+                gettz("UTC")
+            ),
+            did=entry["did"],
+            handle=entry["handle"],
+            about=entry.get("about"),
+            datetime=(
+                datetime.fromtimestamp(entry["datetime"]).astimezone(gettz("UTC"))
+                if entry.get("datetime") is not None
+                else None
+            ),
+            display_name=entry.get("display_name"),
+            followers_count=entry.get("followers_count"),
+            follows_count=entry.get("follows_count"),
+            posts_count=entry.get("posts_count"),
+        )
