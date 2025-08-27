@@ -8,16 +8,21 @@ class BlueSkyPostRepo:
 
     def __init__(self, db: Database):
         self.collection = db.bluesky_posts
-        self.collection.create_index(
-            [("uri", 1), ("news_link", 1)],
-            unique=True,
-            name="uniq_uri_news_link",
-            partialFilterExpression={"uri": {"$exists": True}, "news_link": {"$exists": True}},
-        )
+        self.collection.create_index("uri", unique=True, name="uri_index")
 
     def insert(self, post: BlueSkyPost) -> BlueSkyPost:
         self.collection.insert_one(post.to_dict())
         return post
+
+    def find(self) -> list[BlueSkyPost]:
+        entries = self.collection.find()
+        retured_posts = []
+
+        for entry in entries:
+            print(entry)
+            retured_posts.append(BlueSkyPost.from_db_entry(entry))
+
+        return retured_posts
 
     def find_by_news_link(self, news_link: str) -> list[BlueSkyPost]:
         return [

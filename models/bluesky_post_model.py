@@ -57,11 +57,19 @@ class BlueSkyPost:
 
     def to_dict(self) -> Dict[str, Any]:
         return {
-            "date_added": self.date_added,
+            "date_added": (
+                self.date_added.timestamp() 
+                if self.date_added is not None 
+                else None
+            ),
             "news_link": self.news_link,
             "uri": self.uri,
             "link": self.link,
-            "datetime": self.datetime,
+            "datetime": (
+                self.datetime.timestamp() 
+                if self.datetime is not None 
+                else None
+            ),
             "text": self.text,
             "like_count": self.like_count,
             "repost_count": self.repost_count,
@@ -81,7 +89,7 @@ class BlueSkyPost:
             link=entry.get("link", None),
             user_did=entry["user_did"],
             datetime=(
-                datetime.fromisoformat(entry["datetime"])
+                datetime.fromtimestamp(entry["datetime"])
                 if entry.get("datetime") is not None
                 else None
             ),

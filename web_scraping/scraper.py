@@ -6,6 +6,7 @@ from newspaper import Article
 from newspaper.article import requests
 from newspaper.utils import BeautifulSoup
 
+from custom_logging import custom_logger
 from custom_logging.custom_logger import CustomLogger
 from models.news_sources import NewsSource
 from models.labeled_news import LabeledNews
@@ -238,7 +239,7 @@ class EFarsasScraper(Scraper):
                             if review_rating.get("alternateName") == "falso":
                                 label = False
                 except json.JSONDecodeError:
-                    print("json.JSONDecodeError")
+                    self.custom_logger.error("json.JSONDecodeError")
                     continue
 
             return LabeledNews.from_dict(

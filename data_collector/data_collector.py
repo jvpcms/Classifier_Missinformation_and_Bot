@@ -98,14 +98,19 @@ class DataCollector:
         """Associate labeled news with social media posts"""
 
         query = labeled_news.get_search_query()
-        query_str = " ".join(query)
+
+        if query is None or len(query) == 0:
+            return []
 
         related_posts = self.social_media_sdk_colleciton.bluesky_sdk.search_posts(
-            query_str
+            query
         )
 
         for post in related_posts:
             post.associate_with_labeled_news(labeled_news)
+
+            user = self.social_media_sdk_colleciton.bluesky_sdk.get_user_details(post.user_did)
+            post.associate_with_link(user)
 
         return related_posts
 
