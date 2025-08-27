@@ -11,15 +11,15 @@ from utils.search_queries import get_custom_stopwords, portuguese_word_tokenize
 class LabeledNews:
     link: str
     source_url: str
-    title: str | None
-    description: str | None
-    claim_review: str | None
-    review_body: str | None
-    best_rating: int | None
-    rating_value: int | None
-    label: bool | None
-    date_published: datetime | None
-    date_added: datetime | None
+    title: Union[str, None]
+    description: Union[str, None]
+    claim_review: Union[str, None]
+    review_body: Union[str, None]
+    best_rating: Union[int, None]
+    rating_value: Union[int, None]
+    label: Union[bool, None]
+    date_published: Union[datetime, None]
+    date_added: Union[datetime, None]
 
     @staticmethod
     def from_dict(d: dict) -> "LabeledNews":

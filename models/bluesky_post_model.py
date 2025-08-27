@@ -16,7 +16,7 @@ class BlueSkyPost:
     uri: str
     link: Union[str, None]
     user_did: str
-    datetime: datetime
+    datetime: Union[datetime, None]
     text: Union[str, None]
     like_count: Union[int, None]
     repost_count: Union[int, None]
@@ -71,6 +71,28 @@ class BlueSkyPost:
             "langs": self.langs,
             "images": self.images,
         }
+
+    @staticmethod
+    def from_db_entry(entry: dict) -> "BlueSkyPost":
+        return BlueSkyPost(
+            date_added=datetime.fromtimestamp(entry["date_added"]),
+            news_link=entry.get("news_link", None),
+            uri=entry["uri"],
+            link=entry.get("link", None),
+            user_did=entry["user_did"],
+            datetime=(
+                datetime.fromisoformat(entry["datetime"])
+                if entry.get("datetime") is not None
+                else None
+            ),
+            text=entry.get("text", None),
+            like_count=entry.get("like_count", None),
+            repost_count=entry.get("repost_count", None),
+            reply_count=entry.get("reply_count", None),
+            quote_count=entry.get("quote_count", None),
+            langs=entry.get("langs", []) or [],
+            images=entry.get("images", []) or [],
+        )
 
     @property
     def rkey(self) -> str:
