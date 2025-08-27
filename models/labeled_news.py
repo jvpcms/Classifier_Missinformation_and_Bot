@@ -1,3 +1,4 @@
+from typing import Union
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -79,9 +80,9 @@ class LabeledNews:
             ),
         }
 
-    def get_search_query(self) -> str:
+    def get_search_query(self) -> Union[str, None]:
         if self.description is None:
-            return ""
+            return None
 
         query = portuguese_word_tokenize(self.description)
         custom_stopwords = get_custom_stopwords()
