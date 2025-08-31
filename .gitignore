@@ -1,10 +1,5 @@
 **/.env
 **/__pycache__
 
-reddit_api/shelve/*
-!reddit_api/shelve/.gitkeep
-
 testing_data/*
 web_scraping/nltk_data/*
-
-notes.txt
