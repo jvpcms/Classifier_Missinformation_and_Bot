@@ -33,7 +33,7 @@ The workflow was structured to sequentially collect, process, and classify data,
 
 <img width="1088" height="608" alt="Screenshot from 2025-08-29 02-53-32" src="https://github.com/user-attachments/assets/a1c3a61e-683e-4dec-a702-ffd08432b76e" />
 
-1.  [cite_start]**Identify Labeled News**: News is collected from sources like G1, Aos Fatos, and e-Farsas, among others, and labeled as true or false[cite: 74]. [cite_start]News from journalistic outlets is considered true by default[cite: 165].
-2.  [cite_start]**Associate and Collect Posts**: Search queries are generated from the news text and submitted to the Bluesky API to find related posts[cite: 210, 211, 212].
-3.  [cite_start]**Collect Account Data**: For each post found, the author's profile data is extracted and stored[cite: 217].
-4.  [cite_start]**Account Classification**: Profiles are classified as *bot* or *non-bot* based on a strict consensus criterion: an account is considered a *bot* if 4 or 5 of the models classify it as such, and a *non-bot* if it receives 0 or 1 vote[cite: 281]. [cite_start]Accounts with 2 or 3 votes are considered inconclusive[cite: 281].
+1.  **Identify Labeled News**: News is collected from sources like G1, Aos Fatos, and e-Farsas, among others, and labeled as true or false. News from journalistic outlets is considered true by default.
+2.  **Associate and Collect Posts**: Search queries are generated from the news text and submitted to the Bluesky API to find related posts.
+3.  **Collect Account Data**: For each post found, the author's profile data is extracted and stored.
+4.  **Account Classification**: Profiles are classified as *bot* or *non-bot* based on a strict consensus criterion on the classification results of the different models.
