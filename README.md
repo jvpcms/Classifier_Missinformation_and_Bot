@@ -31,7 +31,7 @@ The result is a structured dataset that allows for the analysis of content disse
 
 The workflow was structured to sequentially collect, process, and classify data, culminating in the creation of the `FakeNewsAndSocialBotSet` dataset.
 
-![Process Flow](https://raw.githubusercontent.com/jvpcms/Classifier_Missinformation_and_Bot/main/assets/macro_functional_model.png)
+<img width="1088" height="608" alt="Screenshot from 2025-08-29 02-53-32" src="https://github.com/user-attachments/assets/a1c3a61e-683e-4dec-a702-ffd08432b76e" />
 
 1.  [cite_start]**Identify Labeled News**: News is collected from sources like G1, Aos Fatos, and e-Farsas, among others, and labeled as true or false[cite: 74]. [cite_start]News from journalistic outlets is considered true by default[cite: 165].
 2.  [cite_start]**Associate and Collect Posts**: Search queries are generated from the news text and submitted to the Bluesky API to find related posts[cite: 210, 211, 212].
