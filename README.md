@@ -1,42 +1,39 @@
-# Fake News and Bot Account Classifier
-## Setup
+# Disinformation and Social Bot Detection in Portuguese
 
-### Environment Variables
-```
-REDDIT_CLIENT_SECRET=your_reddit_client_secret
-REDDIT_APP_ID=your_reddit_app_id
-REDDIT_USERNAME=your_username
-REDDIT_PASSWORD=your_password
-MONGO_INITDB_ROOT_USERNAME=db_username
-MONGO_INITDB_ROOT_PASSWORD=db_password
-```
+This project, developed under the Institutional Program for Scholarships in Technological Development and Innovation (PIBITI) at the Military Institute of Engineering (IME), focuses on building a dataset to combat disinformation and the activity of social bots in the Portuguese language.
 
-## Components
-### Reddit API
-Esta aplicação em Python foi desenvolvida com o objetivo de simplificar e abstrair a comunicação com a API do Reddit, proporcionando uma interface organizada e orientada a objetos para interações com os dados da plataforma. Inspirada por um modelo de ORM (Object-Relational Mapping), a aplicação encapsula as requisições HTTP, permitindo que operações na API do Reddit sejam realizadas de maneira intuitiva, utilizando classes e objetos para representar posts, perfis de usuários, subreddits e outras entidades relevantes.
+The main objective is to address the scarcity of datasets that integrate labeled news (true or false) with the profiles of users who share them on social networks, classifying them as bots or non-bots.
 
-O desenvolvimento dessa aplicação é motivado pela necessidade de extrair dados de publicações de notícias e construir conjuntos de dados consistentes sobre notícias falsas e verdadeiras, para aplicações em inteligência artificial, como treinamento de modelos de classificação. Além disso, a aplicação permite a coleta de dados sobre perfis de usuários, possibilitando a análise e a classificação de contas como bots ou não-bots com base em suas atividades e características comportamentais.
+## Project Overview
 
-### Database
-### Web Scraping
+The core of the project is an automated process that performs the following steps:
+1.  **News Collection**: Extracts and labels news from journalistic sources and reliable fact-checking agencies.
+2.  **Social Network Association**: Searches for posts sharing this news on the Bluesky social network.
+3.  **User Data Collection**: Stores metadata from the profiles that made the posts.
+4.  **Account Classification**: Uses a committee of Machine Learning models to classify accounts as "Social Bot" or "Non-Social Bot".
 
-## Basic Use
-```python
-  from interfaces.factory import get_interfaces
+The result is a structured dataset that allows for the analysis of content dissemination and the training of new detection models.
 
+## Technologies and Concepts Used
 
-  interfaces = get_interfaces()
+* **Database**: MongoDB, chosen for its flexibility in storing semi-structured data.
+* **Containerization**: Docker, to ensure the project's environmental reproducibility.
+* **Data Collection**: Web scraping of news portals and fact-checking agencies, and consumption of the Bluesky social network API.
+* **Machine Learning**: User account classification using a committee of pre-trained models, including:
+    * K-Nearest Neighbors
+    * Decision Tree
+    * Random Forest
+    * Logistic Regression
+    * Neural Network
+* **Natural Language Processing**: Query generation from tokens extracted from news content for social network searching.
 
-  # instantiate interfaces
-  post_interface = interfaces.post_interface
-  subreddit_interface = interfaces.subreddit_interface
-  user_interface = interfaces.user_interface
+## Methodology
 
-  # search posts
-  posts = post_interface.search("Latest News", limit=3)
+The workflow was structured to sequentially collect, process, and classify data, culminating in the creation of the `FakeNewsAndSocialBotSet` dataset.
 
-  # user and subreddit details
-  for post in posts:
-      user = user_interface.about(post.author)
-      subreddit = subreddit_interface.about(post.subreddit)
-```
+![Process Flow](https://raw.githubusercontent.com/jvpcms/Classifier_Missinformation_and_Bot/main/assets/macro_functional_model.png)
+
+1.  [cite_start]**Identify Labeled News**: News is collected from sources like G1, Aos Fatos, and e-Farsas, among others, and labeled as true or false[cite: 74]. [cite_start]News from journalistic outlets is considered true by default[cite: 165].
+2.  [cite_start]**Associate and Collect Posts**: Search queries are generated from the news text and submitted to the Bluesky API to find related posts[cite: 210, 211, 212].
+3.  [cite_start]**Collect Account Data**: For each post found, the author's profile data is extracted and stored[cite: 217].
+4.  [cite_start]**Account Classification**: Profiles are classified as *bot* or *non-bot* based on a strict consensus criterion: an account is considered a *bot* if 4 or 5 of the models classify it as such, and a *non-bot* if it receives 0 or 1 vote[cite: 281]. [cite_start]Accounts with 2 or 3 votes are considered inconclusive[cite: 281].
